@@ -1,0 +1,31 @@
+# build output
+dist/
+# generated types
+.astro/
+
+# dependencies
+node_modules/
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+
+# environment variables
+.env
+.env.production
+
+# macOS-specific files
+.DS_Store
+
+# jetbrains setting folder
+.idea/
+
+# dane logowania do serwera (SFTP/FTP) — nigdy nie commitować
+.vscode/sftp.json
+
+# źródła three pobierane przez scripts/build-vendor-three.mjs
+# (wynik buildu — public/vendor/three/ — JEST wersjonowany, wchodzi na hosting)
+.cache/

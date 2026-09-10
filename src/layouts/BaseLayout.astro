@@ -1,0 +1,229 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import CookieBanner from '../components/CookieBanner.astro';
+import StickyCall from '../components/StickyCall.astro';
+import { SITE } from '../config';
+import { getLang, counterpart, normalize, HREFLANG, OG_LOCALE, useTranslations } from '../i18n';
+
+interface Props {
+  title: string;
+  description: string;
+  /** path only, e.g. "/realizacje" */
+  path?: string;
+  ogImage?: string;
+  headerVariant?: 'transparent' | 'solid';
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[];
+}
+
+const {
+  title,
+  description,
+  path = Astro.url.pathname,
+  ogImage = '/og-default.png',
+  headerVariant = 'solid',
+  jsonLd,
+} = Astro.props;
+
+const lang = getLang(path);
+const t = useTranslations(lang);
+
+/**
+ * `hreflang` wystawiamy TYLKO dla stron, które faktycznie mają parę
+ * (patrz `ROUTE_PAIRS`). Deklarowanie alternatywy prowadzącej donikąd albo
+ * na inną treść to dla Google błąd, a nie ułatwienie — a blog i case studies
+ * świadomie zostają jednojęzyczne.
+ */
+const other = counterpart(path);
+const alternates = other
+  ? [
+      { lang: HREFLANG[lang], href: new URL(normalize(path), SITE.url).href },
+      { lang: HREFLANG[lang === 'pl' ? 'en' : 'pl'], href: new URL(other, SITE.url).href },
+      { lang: 'x-default', href: new URL(lang === 'pl' ? normalize(path) : other, SITE.url).href },
+    ]
+  : [];
+
+const canonical = new URL(path, SITE.url).href.replace(/\/$/, '') || SITE.url;
+const ogImageUrl = new URL(ogImage, SITE.url).href;
+
+const isLegal = /^\/(polityka-prywatnosci|regulamin|cookies)/.test(path);
+
+const orgJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfessionalService',
+  '@id': `${SITE.url}/#business`,
+  name: SITE.name,
+  url: SITE.url,
+  image: ogImageUrl,
+  logo: new URL('/logo2.png', SITE.url).href,
+  email: SITE.email,
+  telephone: SITE.phone,
+  priceRange: '$$$',
+  inLanguage: HREFLANG[lang],
+  description:
+    lang === 'en'
+      ? 'Bespoke logotypes, lettering and wall pieces cut from steel, corten, aluminium and brass. Individual design, precise execution, shipping across Poland.'
+      : 'Logotypy firmowe, napisy i dekoracje ścienne z metalu ciętego na wymiar. Projekt indywidualny, precyzyjne wykonanie, wysyłka w całej Polsce.',
+  areaServed: { '@type': 'Country', name: SITE.areaServed },
+  // sameAs wraca, gdy dostaniemy realne profile — patrz slot `copy-social`.
+  // Gołe domeny (instagram.com/) w danych strukturalnych to fałszywy sygnał dla Google.
+  ...(isLegal && {
+    legalName: SITE.legalName,
+    vatID: SITE.nip,
+    taxID: SITE.nip,
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: SITE.address.street,
+      postalCode: SITE.address.postal,
+      addressLocality: SITE.address.city,
+      addressRegion: SITE.region,
+      addressCountry: SITE.address.country,
+    },
+  }),
+};
+
+const graph = [orgJsonLd, ...(jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [])];
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script is:inline>
+      document.documentElement.classList.add('js');
+    </script>
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {alternates.map((a) => <link rel="alternate" hreflang={a.lang} href={a.href} />)}
+    <meta name="theme-color" content="#EDEAE3" />
+    {/* Belt-and-suspenders razem z `color-scheme` w global.css: część
+        przeglądarek na Androidzie (np. Samsung Internet) sprawdza ten
+        meta-tag przy wymuszonym trybie ciemnym niezależnie od deklaracji
+        CSS — bez obu naraz potrafi przemalować kolory marki (rdza → czerwień). */}
+    <meta name="color-scheme" content="light" />
+    <meta name="generator" content={Astro.generator} />
+
+    {/* Ikony generuje `scripts/build-brand-assets.mjs` + `build-favicon-svg.mjs`
+        w rozmiarach, w jakich są realnie używane. Wcześniej i ikona karty,
+        i apple-touch-icon wskazywały na `favicon.png` (2000 × 2000, 44 kB). */}
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="alternate icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/favicon-180.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <link
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      href="/fonts/big-shoulders-display-latin-900-normal.woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      href="/fonts/ibm-plex-sans-latin-400-normal.woff2"
+      crossorigin
+    />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={SITE.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:locale" content={OG_LOCALE[lang]} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl} />
+
+    <script
+      type="application/ld+json"
+      set:html={JSON.stringify(graph.length === 1 ? graph[0] : { '@context': 'https://schema.org', '@graph': graph })}
+    />
+
+    {/*
+      Import mapa dla scen 3D. Musi być JEDNA na dokument — przeglądarki
+      odrzucają drugą — a od fazy 3 na jednej stronie potrafią stać dwie sceny
+      (hero i teaser konfiguratora). Dlatego siedzi w layoucie, nie
+      w komponentach. Waży ~130 bajtów i nic sama nie pobiera: przeglądarka
+      sięgnie po three.js dopiero, gdy któryś moduł faktycznie go zaimportuje.
+
+      Od fazy 4 cel jest lokalny: `public/vendor/three/` to zawężony build
+      z `scripts/build-vendor-three.mjs` (1,61 MB → 0,81 MB surowego kodu).
+      Import mapa musiała zostać, bo dodatki z `jsm` importują `three` jako
+      bare specifier — zmienił się wyłącznie adres.
+    */}
+    <script type="importmap" is:inline set:html={JSON.stringify({
+      imports: { three: '/vendor/three/three.js' },
+    })} />
+  </head>
+  <body>
+    <a href="#main" class="skip-link">{t('skip')}</a>
+    <Header variant={headerVariant} />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+    <CookieBanner />
+    <StickyCall />
+
+    <style>
+      .skip-link {
+        position: fixed;
+        top: 0;
+        left: 0;
+        transform: translateY(-120%);
+        background: var(--color-onyx);
+        color: var(--color-bg);
+        padding: 0.75rem 1.25rem;
+        z-index: 100;
+        transition: transform 0.2s;
+      }
+      .skip-link:focus-visible { transform: none; }
+    </style>
+
+    <script>
+      const els = Array.from(document.querySelectorAll('[data-reveal]'));
+      const show = (el: Element) => el.classList.add('in-view');
+      const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      if (!els.length) {
+        // nothing to do
+      } else if (reduce || !('IntersectionObserver' in window)) {
+        els.forEach(show);
+      } else {
+        const vh = window.innerHeight;
+        const io = new IntersectionObserver(
+          (entries) => {
+            for (const e of entries) {
+              if (e.isIntersecting) {
+                show(e.target);
+                io.unobserve(e.target);
+              }
+            }
+          },
+          { threshold: 0, rootMargin: '0px 0px -12% 0px' }
+        );
+        els.forEach((el) => {
+          // visible (or nearly) on first paint → reveal now, no animation lag
+          if (el.getBoundingClientRect().top < vh * 0.85) show(el);
+          else io.observe(el);
+        });
+        // safety net only for elements the user could already have reached
+        window.addEventListener('load', () => {
+          const bottom = window.scrollY + window.innerHeight;
+          els.forEach((el) => {
+            const r = el.getBoundingClientRect();
+            if (r.top + window.scrollY < bottom) show(el);
+          });
+        });
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,60 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import { SITE } from '../config';
+---
+
+<PageLayout
+  title="Polityka cookies — Ferro Studio"
+  description="Informacje o plikach cookies wykorzystywanych w serwisie ferrostudio.pl."
+  index="informacje prawne"
+  heading="Polityka cookies"
+  updated="30 sierpnia 2026"
+>
+  <h2>1. Czym są pliki cookies</h2>
+  <p>
+    Cookies to niewielkie pliki tekstowe zapisywane na urządzeniu użytkownika podczas
+    korzystania ze strony. Używane są m.in. do zapewnienia poprawnego działania serwisu.
+  </p>
+
+  <h2>2. Cookies wykorzystywane w serwisie</h2>
+  <p>
+    Serwis <strong>ferrostudio.pl</strong> jest stroną statyczną i w podstawowym zakresie
+    <strong>nie wykorzystuje własnych plików cookies o charakterze marketingowym ani
+    analitycznym</strong>. Czcionki i zasoby graficzne serwowane są z tego samego serwera,
+    bez pośrednictwa zewnętrznych sieci CDN.
+  </p>
+  <ul>
+    <li>
+      <strong>Cookies techniczne / niezbędne</strong> — mogą być ustawiane przez serwer
+      hostingowy w celu zapewnienia bezpieczeństwa i stabilności połączenia. Nie wymagają
+      zgody użytkownika.
+    </li>
+    <li>
+      <strong>Formularz kontaktowy</strong> — po wysłaniu formularza dane trafiają
+      bezpośrednio na nasz serwer i nie są przekazywane żadnemu zewnętrznemu operatorowi.
+      Do ochrony przed spamem używamy technicznego mechanizmu (honeypot) niewymagającego
+      zgody i niewykorzystującego plików cookies.
+    </li>
+  </ul>
+  <p>
+    W przypadku wdrożenia w przyszłości narzędzi analitycznych lub osadzonych treści
+    (np. mapa, wtyczki społecznościowe), niniejsza polityka zostanie zaktualizowana,
+    a użytkownik zostanie poproszony o zgodę przed uruchomieniem takich cookies.
+  </p>
+
+  <h2>3. Zarządzanie cookies</h2>
+  <p>
+    Użytkownik może w każdej chwili zmienić ustawienia dotyczące cookies w swojej
+    przeglądarce — zablokować je, usunąć lub ograniczyć. Ograniczenie stosowania cookies
+    technicznych może wpłynąć na działanie niektórych funkcji strony.
+  </p>
+  <p>
+    Instrukcje dla popularnych przeglądarek: Chrome, Firefox, Safari, Microsoft Edge —
+    dostępne w sekcjach pomocy tych przeglądarek.
+  </p>
+
+  <h2>4. Kontakt</h2>
+  <p>
+    Pytania dotyczące niniejszej polityki: <a href={`mailto:${SITE.email}`}>{SITE.email}</a>.
+  </p>
+</PageLayout>

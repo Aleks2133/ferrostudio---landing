@@ -1,0 +1,16 @@
+# Ferro Studio
+
+> Ferro Studio is a Polish custom metal-cutting studio. It makes company logos and signage, wall decorations, and fully custom metal pieces to order, shipped nationwide across Poland. Positioning: premium/craft, not price-driven.
+
+## Pages
+
+- [Strona główna](https://ferrostudio.pl/): Studio overview, offer (logotypes, wall pieces, custom work), materials, one project (Society Landscape), contact.
+- [Jak zamawiać](https://ferrostudio.pl/jak-zamawiac): Step-by-step ordering process, what to prepare, price/time guidance, FAQ.
+- [Wycena](https://ferrostudio.pl/wycena): Short brief form for a project quote.
+- [Kontakt](https://ferrostudio.pl/kontakt): Contact form, phone, email, and ordering FAQ.
+
+## Notes
+
+- Site language: Polish only. Service area: all of Poland (nationwide courier shipping), studio based in the Łódź region.
+- Legal/company details (name, address, NIP) appear only on the legal pages: /polityka-prywatnosci, /regulamin, /cookies.
+- Full sitemap: https://ferrostudio.pl/sitemap-index.xml

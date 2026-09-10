@@ -1,0 +1,175 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import { SITE } from '../config';
+---
+
+<PageLayout
+  title="Regulamin — Ferro Studio"
+  description="Regulamin świadczenia usług i sprzedaży produktów z metalu na zamówienie — ferrostudio.pl."
+  index="informacje prawne"
+  heading="Regulamin"
+  updated="30 sierpnia 2026"
+>
+  <h2>§1. Postanowienia ogólne</h2>
+  <ol>
+    <li>
+      Regulamin określa zasady świadczenia usług oraz sprzedaży produktów wykonywanych
+      na indywidualne zamówienie przez <strong>{SITE.legalName}</strong>, działającą pod
+      marką „Ferro Studio", {SITE.address.street}, {SITE.address.postal} {SITE.address.city},
+      NIP {SITE.nip}, REGON {SITE.regon} (dalej: „Wykonawca").
+    </li>
+    <li>
+      Kontakt z Wykonawcą: <a href={`mailto:${SITE.email}`}>{SITE.email}</a>,
+      tel. <a href={SITE.phoneHref}>{SITE.phone}</a>.
+    </li>
+    <li>
+      Klientem może być konsument, przedsiębiorca na prawach konsumenta oraz przedsiębiorca.
+    </li>
+    <li>
+      Serwis ferrostudio.pl nie jest sklepem internetowym z gotowym asortymentem — służy
+      prezentacji oferty oraz kontaktu w celu ustalenia i realizacji indywidualnego zamówienia.
+    </li>
+  </ol>
+
+  <h2>§2. Przedmiot świadczenia</h2>
+  <ol>
+    <li>
+      Wykonawca projektuje i wycina elementy z metalu (m.in. logotypy, napisy, litery,
+      dekoracje ścienne) na podstawie materiałów lub wytycznych przekazanych przez Klienta.
+    </li>
+    <li>
+      Produkty mają charakter <strong>rzeczy nieprefabrykowanej, wykonanej według
+      specyfikacji Klienta i służącej zaspokojeniu jego zindywidualizowanych potrzeb</strong>.
+    </li>
+  </ol>
+
+  <h2>§3. Zawarcie umowy</h2>
+  <ol>
+    <li>
+      Klient przesyła zapytanie (formularz, e-mail lub telefonicznie) wraz z projektem
+      lub opisem oczekiwań, wskazując m.in. wymiary, materiał i sposób wykończenia.
+    </li>
+    <li>
+      Wykonawca przedstawia wycenę zawierającą: cenę, specyfikację, termin realizacji
+      i koszt dostawy. Wycena jest ważna przez 14 dni, o ile nie wskazano inaczej.
+    </li>
+    <li>
+      Umowa zostaje zawarta z chwilą akceptacji wyceny przez Klienta (w formie
+      dokumentowej, np. wiadomości e-mail) oraz — jeżeli tak ustalono — wpłaty zaliczki.
+    </li>
+    <li>
+      Przed rozpoczęciem cięcia Wykonawca może przedstawić projekt do zatwierdzenia.
+      Zatwierdzenie projektu przez Klienta jest wiążące co do kształtu, treści i wymiarów.
+    </li>
+  </ol>
+
+  <h2>§4. Płatność</h2>
+  <ol>
+    <li>Ceny podawane są w złotych polskich.</li>
+    <li>
+      Dopuszczalne formy płatności: przelew bankowy na rachunek Wykonawcy. Inne formy —
+      po indywidualnym ustaleniu.
+    </li>
+    <li>
+      Wykonawca może uzależnić przystąpienie do realizacji od wpłaty zaliczki w wysokości
+      wskazanej w wycenie. Pozostała część ceny płatna jest przed wysyłką, chyba że
+      ustalono inaczej.
+    </li>
+    <li>Do każdego zamówienia wystawiany jest dokument sprzedaży (faktura).</li>
+  </ol>
+
+  <h2>§5. Realizacja i dostawa</h2>
+  <ol>
+    <li>
+      Termin realizacji liczony jest od dnia zatwierdzenia projektu i zaksięgowania
+      zaliczki (jeśli była wymagana).
+    </li>
+    <li>
+      Dostawa realizowana jest za pośrednictwem firmy kurierskiej na terenie
+      Rzeczypospolitej Polskiej. Koszt i czas dostawy wskazywane są w wycenie.
+    </li>
+    <li>
+      Wykonawca pakuje produkty w sposób zabezpieczający przed uszkodzeniem w transporcie.
+    </li>
+    <li>
+      Zaleca się sprawdzenie przesyłki w obecności kuriera. W razie uszkodzenia opakowania
+      pomocne jest sporządzenie protokołu szkody.
+    </li>
+  </ol>
+
+  <h2>§6. Prawo odstąpienia od umowy</h2>
+  <ol>
+    <li>
+      Zgodnie z art. 38 pkt 3 ustawy o prawach konsumenta, prawo odstąpienia od umowy
+      zawartej na odległość <strong>nie przysługuje</strong> konsumentowi w odniesieniu do
+      umowy, w której przedmiotem świadczenia jest rzecz nieprefabrykowana, wyprodukowana
+      według specyfikacji konsumenta lub służąca zaspokojeniu jego zindywidualizowanych
+      potrzeb. Produkty Ferro Studio są wykonywane na indywidualne zamówienie i podlegają
+      temu wyłączeniu.
+    </li>
+    <li>
+      Powyższe nie ogranicza uprawnień Klienta z tytułu rękojmi i gwarancji ani
+      odpowiedzialności Wykonawcy za wady.
+    </li>
+  </ol>
+
+  <h2>§7. Reklamacje (rękojmia)</h2>
+  <ol>
+    <li>
+      Wykonawca odpowiada wobec Klienta za zgodność świadczenia z umową na zasadach
+      określonych w powszechnie obowiązujących przepisach, w szczególności w ustawie
+      o prawach konsumenta oraz Kodeksie cywilnym.
+    </li>
+    <li>
+      Reklamację należy zgłosić na adres <a href={`mailto:${SITE.email}`}>{SITE.email}</a>,
+      opisując wadę i dołączając zdjęcia oraz dane zamówienia.
+    </li>
+    <li>
+      Wykonawca rozpatruje reklamację w terminie 14 dni od jej otrzymania.
+    </li>
+    <li>
+      Nie stanowią wady: nieznaczne różnice w odcieniu i fakturze metalu, ślady procesu
+      cięcia na krawędziach właściwe dla danej technologii, naturalna zmienność wyglądu
+      stali typu corten oraz różnice wynikające z ustawień wyświetlacza Klienta względem
+      wizualizacji.
+    </li>
+  </ol>
+
+  <h2>§8. Prawa autorskie</h2>
+  <ol>
+    <li>
+      Klient oświadcza, że posiada prawa do materiałów (logotypy, grafiki, projekty)
+      przekazanych do realizacji, i ponosi odpowiedzialność za naruszenie praw osób trzecich.
+    </li>
+    <li>
+      Wykonawca może prezentować zrealizowane prace w portfolio i mediach społecznościowych,
+      chyba że Klient zastrzeże inaczej w formie dokumentowej.
+    </li>
+  </ol>
+
+  <h2>§9. Dane osobowe</h2>
+  <p>
+    Zasady przetwarzania danych osobowych określa <a href="/polityka-prywatnosci">Polityka
+    prywatności</a>.
+  </p>
+
+  <h2>§10. Pozasądowe rozwiązywanie sporów</h2>
+  <p>
+    Konsument ma możliwość skorzystania z pozasądowych sposobów rozpatrywania reklamacji
+    i dochodzenia roszczeń, w tym z platformy ODR Komisji Europejskiej dostępnej pod
+    adresem ec.europa.eu/consumers/odr.
+  </p>
+
+  <h2>§11. Postanowienia końcowe</h2>
+  <ol>
+    <li>
+      W sprawach nieuregulowanych stosuje się przepisy prawa polskiego, w szczególności
+      Kodeksu cywilnego oraz ustawy o prawach konsumenta.
+    </li>
+    <li>
+      Wykonawca może zmienić regulamin z ważnych przyczyn; do zamówień złożonych przed
+      zmianą stosuje się regulamin w brzmieniu dotychczasowym.
+    </li>
+    <li>Regulamin obowiązuje od 30 sierpnia 2026 r.</li>
+  </ol>
+</PageLayout>

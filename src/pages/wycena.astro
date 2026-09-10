@@ -1,0 +1,467 @@
+---
+/**
+ * /wycena — brief wieloetapowy.
+ *
+ * Premium nie ma „formularza kontaktowego", tylko brief. Konwertuje lepiej
+ * i daje uporządkowanego leada zamiast „dzień dobry ile kosztuje logo".
+ *
+ * Twarde wymagania z briefu (15.3), których pilnujemy:
+ *  - **bez JS formularz działa** — degraduje się do jednej długiej strony ze
+ *    wszystkimi polami i jednym przyciskiem wysyłki. Podział na kroki to
+ *    wyłącznie warstwa wygody, nie warunek działania.
+ *  - stan kroku w URL (`?krok=2`), więc wstecz/dalej w przeglądarce działa,
+ *  - honeypot + time-trap: wysyłki szybsze niż 3 s od załadowania odrzucamy,
+ *  - walidacja natywna HTML5, komunikaty własne, sentence case.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import ScaleFigure from '../components/ScaleFigure.astro';
+import { SITE } from '../config';
+
+const what = [
+  'Logotyp albo napis firmowy',
+  'Dekoracja ścienna',
+  'Projekt indywidualny',
+  'Jeszcze nie wiem',
+];
+
+const where = [
+  'Recepcja lub wnętrze biurowe',
+  'Elewacja',
+  'Wnętrze prywatne',
+  'Lokal usługowy lub gastronomia',
+  'Inne',
+];
+
+const files = [
+  'Mam plik wektorowy (AI, SVG, PDF, DXF)',
+  'Mam grafikę rastrową (PNG, JPG)',
+  'Mam tylko szkic albo zdjęcie',
+  'Mam tylko pomysł',
+];
+---
+
+<BaseLayout
+  title="Wyceń projekt — Ferro Studio"
+  description="Opisz projekt w trzech krokach: co robimy, gdzie zawiśnie, czy masz plik. Wycena w 1–2 dni robocze."
+  path="/wycena"
+>
+  <PageHero breadcrumb={[{ label: 'Wycena' }]} index="brief" rule={false}>
+    <h1>Wyceń projekt</h1>
+    <p class="phero__lead">
+      Trzy pytania, dwie minuty. Im więcej nam powiesz, tym konkretniejszą wycenę
+      dostaniesz — i tym mniej będziemy dopytywać.
+    </p>
+  </PageHero>
+
+  <section class="brief">
+    <div class="container-x">
+      <!-- Pasek postępu grafitowy, nie rdzawy: limit jednego akcentu rdzawego
+           na widok ekranu wydajemy na przycisk wysyłki. -->
+      <div class="brief__bar" id="brief-bar" hidden>
+        <div class="brief__track"><span id="brief-fill"></span></div>
+        <p class="brief__count mono">Krok <span id="brief-now">1</span> z 3</p>
+      </div>
+
+      <form
+        class="brief__form"
+        id="brief-form"
+        action="/send-form.php"
+        method="POST"
+        enctype="multipart/form-data"
+      >
+        <input type="hidden" name="subject" value="Nowy brief z ferrostudio.pl" />
+        <input type="hidden" name="from_name" value="Ferro Studio — brief" />
+        <input type="text" name="website" class="brief__hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
+        <input type="hidden" name="_start" id="brief-start" value="" />
+
+        <fieldset class="brief__step" data-step="1">
+          <legend>
+            <span class="brief__idx mono">01</span>
+            Co robimy?
+          </legend>
+          <div class="brief__opts">
+            {
+              what.map((o, i) => (
+                <label class="opt">
+                  <input type="radio" name="rodzaj" value={o} required={i === 0} />
+                  <span>{o}</span>
+                </label>
+              ))
+            }
+          </div>
+        </fieldset>
+
+        <fieldset class="brief__step" data-step="2">
+          <legend>
+            <span class="brief__idx mono">02</span>
+            Gdzie to zawiśnie?
+          </legend>
+          <div class="brief__opts">
+            {
+              where.map((o) => (
+                <label class="opt">
+                  <input type="radio" name="miejsce" value={o} />
+                  <span>{o}</span>
+                </label>
+              ))
+            }
+          </div>
+
+          <div class="brief__size">
+            <label class="brief__slider">
+              <span>Orientacyjna szerokość elementu</span>
+              <input
+                type="range"
+                name="rozmiar"
+                id="brief-size"
+                min="200"
+                max="3000"
+                step="50"
+                value="1200"
+                aria-describedby="brief-size-out"
+              />
+              <output id="brief-size-out" class="mono">1200 mm</output>
+            </label>
+
+            <ScaleFigure mm={1200} class="brief__scale" />
+          </div>
+        </fieldset>
+
+        <fieldset class="brief__step" data-step="3">
+          <legend>
+            <span class="brief__idx mono">03</span>
+            Masz plik?
+          </legend>
+          <div class="brief__opts">
+            {
+              files.map((o) => (
+                <label class="opt">
+                  <input type="radio" name="plik" value={o} />
+                  <span>{o}</span>
+                </label>
+              ))
+            }
+          </div>
+
+          <label class="fld">
+            <span>Projekt, szkic albo zdjęcie <em>(opcjonalnie)</em></span>
+            <input type="file" name="attachment[]" multiple accept="image/*,.pdf,.ai,.svg,.dxf,.eps" />
+            <small class="fld__hint">
+              Limit 8 MB łącznie. Gdyby plik był większy, odpiszemy z prośbą o dosłanie mailem.
+            </small>
+          </label>
+
+          <div class="fld__row">
+            <label class="fld">
+              <span>Imię i nazwisko lub firma</span>
+              <input type="text" name="name" required autocomplete="name" />
+            </label>
+            <label class="fld">
+              <span>E-mail</span>
+              <input type="email" name="email" required autocomplete="email" />
+            </label>
+          </div>
+
+          <label class="fld">
+            <span>Telefon <em>(opcjonalnie)</em></span>
+            <input type="tel" name="phone" autocomplete="tel" />
+          </label>
+
+          <label class="fld">
+            <span>Cokolwiek jeszcze chcesz dodać</span>
+            <textarea name="message" rows="4" placeholder="Termin, materiał, kolor z identyfikacji, sposób montażu…"></textarea>
+          </label>
+
+          <label class="consent">
+            <input type="checkbox" name="consent" required />
+            <span>
+              Wyrażam zgodę na przetwarzanie moich danych w celu przygotowania wyceny,
+              zgodnie z <a href="/polityka-prywatnosci">Polityką prywatności</a>.
+            </span>
+          </label>
+        </fieldset>
+
+        <div class="brief__nav">
+          <button type="button" class="btn btn-ghost" id="brief-prev" hidden>Wstecz</button>
+          <button type="button" class="btn btn-primary" id="brief-next" hidden>Dalej</button>
+          <button type="submit" class="btn btn-primary" id="brief-send">Wyślij brief do wyceny</button>
+        </div>
+
+        <p class="brief__status" id="brief-status" role="status" aria-live="polite" hidden></p>
+      </form>
+
+      <div class="brief__done" id="brief-done" hidden>
+        <h2>Brief przyjęty.</h2>
+        <p>Odezwiemy się w 1–2 dni robocze.</p>
+      </div>
+
+      <p class="brief__alt">
+        Wolisz napisać po ludzku? <a href="/kontakt" class="link-cut">zwykły formularz kontaktowy</a>{' '}
+        albo telefon: <a href={SITE.phoneHref} class="link-cut">{SITE.phone}</a>.
+      </p>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  const form = document.getElementById('brief-form') as HTMLFormElement | null;
+  if (form) {
+    const steps = Array.from(form.querySelectorAll<HTMLFieldSetElement>('.brief__step'));
+    const bar = document.getElementById('brief-bar');
+    const fill = document.getElementById('brief-fill');
+    const now = document.getElementById('brief-now');
+    const prev = document.getElementById('brief-prev') as HTMLButtonElement | null;
+    const next = document.getElementById('brief-next') as HTMLButtonElement | null;
+    const send = document.getElementById('brief-send') as HTMLButtonElement | null;
+    const status = document.getElementById('brief-status');
+    const done = document.getElementById('brief-done');
+    const start = document.getElementById('brief-start') as HTMLInputElement | null;
+
+    // Time-trap: wysyłki szybsze niż 3 s od załadowania to niemal zawsze boty.
+    if (start) start.value = String(Date.now());
+
+    let step = 1;
+
+    const clamp = (n: number) => Math.min(steps.length, Math.max(1, n));
+
+    const render = (push: boolean, focus = true) => {
+      steps.forEach((s) => {
+        s.hidden = Number(s.dataset.step) !== step;
+      });
+      if (bar) bar.hidden = false;
+      if (fill) fill.style.width = `${(step / steps.length) * 100}%`;
+      if (now) now.textContent = String(step);
+      if (prev) prev.hidden = step === 1;
+      if (next) next.hidden = step === steps.length;
+      if (send) send.hidden = step !== steps.length;
+
+      const url = new URL(location.href);
+      url.searchParams.set('krok', String(step));
+      if (push) history.pushState({ step }, '', url);
+
+      // Focus na pierwszym polu kroku — nawigacja klawiaturą nie może gubić
+      // kontekstu. Przy pierwszym renderze pomijamy, żeby wejście na stronę
+      // nie zaczynało się od obwódki focusa wyglądającej jak błąd walidacji.
+      if (focus) {
+        const first = steps[step - 1]?.querySelector<HTMLElement>('input, textarea, select');
+        first?.focus({ preventScroll: true });
+        steps[step - 1]?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      }
+    };
+
+    const go = (n: number) => {
+      step = clamp(n);
+      render(true);
+    };
+
+    next?.addEventListener('click', () => {
+      // Walidujemy tylko pola bieżącego kroku — inaczej przeglądarka skarży się
+      // o pola, których użytkownik jeszcze nie widział.
+      const current = steps[step - 1];
+      const invalid = current?.querySelector<HTMLInputElement>(':invalid');
+      if (invalid) {
+        invalid.reportValidity();
+        return;
+      }
+      go(step + 1);
+    });
+    prev?.addEventListener('click', () => go(step - 1));
+
+    window.addEventListener('popstate', () => {
+      step = clamp(Number(new URL(location.href).searchParams.get('krok') ?? 1));
+      render(false);
+    });
+
+    step = clamp(Number(new URL(location.href).searchParams.get('krok') ?? 1));
+    render(false, false);
+
+    // Suwak rozmiaru steruje podglądem skali na żywo.
+    const size = document.getElementById('brief-size') as HTMLInputElement | null;
+    const out = document.getElementById('brief-size-out');
+    const scale = form.querySelector<HTMLElement>('.sf');
+    size?.addEventListener('input', () => {
+      const mm = size.value;
+      if (out) out.textContent = `${mm} mm`;
+      if (scale) scale.dataset.mm = mm;
+    });
+
+    // Walidacja przeglądarki (required/e-mail) potrafi po cichu zablokować
+    // submit — dymek natywny łatwo przeoczyć. Dajemy własny, widoczny komunikat.
+    send?.addEventListener('click', () => {
+      if (!form.checkValidity()) {
+        if (status) {
+          status.hidden = false;
+          status.textContent = 'Uzupełnij wymagane pola: imię/firmę, poprawny e-mail i zgodę na przetwarzanie danych.';
+        }
+      } else if (status) {
+        status.hidden = true;
+      }
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const elapsed = Date.now() - Number(start?.value ?? 0);
+      if (elapsed < 3000) {
+        if (status) {
+          status.hidden = false;
+          status.textContent = 'Chwileczkę — wygląda na to, że formularz wysłał się sam. Spróbuj ponownie.';
+        }
+        return;
+      }
+
+      if (send) {
+        send.disabled = true;
+        send.classList.add('is-sending');
+        send.textContent = 'Wysyłam…';
+      }
+
+      try {
+        const res = await fetch(form.action, { method: 'POST', body: new FormData(form) });
+        if (!res.ok) throw new Error(String(res.status));
+        form.hidden = true;
+        if (bar) bar.hidden = true;
+        if (done) {
+          done.hidden = false;
+          done.scrollIntoView({ block: 'center', behavior: 'smooth' });
+        }
+      } catch {
+        if (status) {
+          status.hidden = false;
+          status.textContent =
+            'Nie udało się wysłać. Napisz na kontakt@ferrostudio.pl albo zadzwoń: +48 730 009 902.';
+        }
+        if (send) {
+          send.disabled = false;
+          send.classList.remove('is-sending');
+          send.textContent = 'Wyślij brief do wyceny';
+        }
+      }
+    });
+  }
+</script>
+
+<style>
+  .brief { padding-block: clamp(1rem, 3vw, 1.75rem) clamp(3rem, 6vw, 4.5rem); }
+
+  .brief__bar { margin-bottom: clamp(2rem, 4vw, 3rem); max-width: 46rem; }
+  .brief__track { height: 3px; background: var(--color-line); }
+  .brief__track span {
+    display: block;
+    height: 100%;
+    width: 33%;
+    background: var(--color-graphite);
+    transition: width 0.4s var(--ease-out-quint);
+  }
+  .brief__count { margin-top: 0.6rem; color: var(--color-tin); }
+
+  .brief__form { max-width: 46rem; display: grid; gap: clamp(2.5rem, 5vw, 4rem); }
+  .brief__hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+
+  .brief__step { border: 0; padding: 0; margin: 0; display: grid; gap: 1.5rem; }
+  .brief__step legend {
+    display: flex;
+    align-items: baseline;
+    gap: 0.9rem;
+    font-family: var(--font-display);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    font-size: clamp(1.75rem, 4.5vw, 3rem);
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+  .brief__idx { color: var(--color-tin); font-size: 0.75rem; letter-spacing: 0.08em; }
+
+  .brief__opts { display: grid; gap: 0.6rem; }
+  .opt {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    padding: 0.9rem 1.1rem;
+    border: 1px solid var(--color-line);
+    cursor: pointer;
+    transition: border-color 0.2s, background-color 0.2s;
+  }
+  .opt:hover { border-color: var(--color-tin); }
+  .opt:has(input:checked) { border-color: var(--color-onyx); background: var(--color-panel); }
+  .opt:has(input:focus-visible) { outline: 2px solid var(--color-rust); outline-offset: 2px; }
+  .opt input { flex: none; accent-color: var(--color-rust); }
+
+  .brief__size { margin-top: 1rem; display: grid; gap: 1.5rem; }
+  .brief__slider { display: grid; gap: 0.6rem; }
+  .brief__slider > span { font-size: 0.8125rem; font-weight: 500; }
+  .brief__slider input[type="range"] { width: 100%; accent-color: var(--color-rust); }
+  .brief__slider output { color: var(--color-tin); }
+
+  .fld { display: grid; gap: 0.4rem; }
+  .fld > span { font-size: 0.8125rem; font-weight: 500; }
+  .fld em { font-style: normal; color: var(--color-tin); font-weight: 400; }
+  .fld__hint { font-size: 0.75rem; color: var(--color-tin); line-height: 1.6; }
+  .fld__row { display: grid; grid-template-columns: 1fr; gap: 1.25rem; }
+  .brief__step :is(input[type="text"], input[type="email"], input[type="tel"], textarea) {
+    width: 100%;
+    padding: 0.75rem 0.9rem;
+    border: 1px solid var(--color-line);
+    background: var(--color-bg);
+    font: inherit;
+    font-size: 0.9375rem;
+  }
+  .brief__step :is(input, textarea, select):focus-visible { outline: 2px solid var(--color-rust); outline-offset: 1px; }
+  .brief__step textarea { resize: vertical; }
+
+  .consent { display: flex; gap: 0.7rem; align-items: flex-start; font-size: 0.8125rem; color: var(--color-tin); }
+  .consent input { margin-top: 0.2rem; flex: none; }
+  .consent a { color: var(--color-rust); }
+
+  .brief__nav { display: flex; flex-wrap: wrap; gap: 1rem; }
+  .brief__status { font-size: 0.875rem; color: var(--color-rust); max-width: 52ch; }
+
+  /* Wysyłanie = przejazd wiązki, ten sam motyw co [data-reveal] w global.css. */
+  #brief-send { position: relative; overflow: hidden; isolation: isolate; }
+  #brief-send::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -35%;
+    width: 35%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.55), transparent);
+    opacity: 0;
+    pointer-events: none;
+  }
+  #brief-send.is-sending::after {
+    opacity: 1;
+    animation: cf-sweep 1.15s var(--ease-out-quint) infinite;
+  }
+  @keyframes cf-sweep {
+    from { left: -35%; }
+    to { left: 100%; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #brief-send::after { animation: none; }
+  }
+
+  .brief__done { max-width: 46rem; }
+  .brief__done h2 { font-size: clamp(2rem, 5vw, 3.5rem); }
+  .brief__done > p { margin-top: 0.9rem; color: color-mix(in srgb, var(--color-onyx) 74%, transparent); }
+  .brief__more { margin-top: clamp(2rem, 4vw, 3rem); padding-top: 1.5rem; border-top: 1px solid var(--color-line); }
+  .brief__more > p { font-size: 0.875rem; color: var(--color-tin); }
+  .brief__cta { margin-top: 1rem; display: flex; flex-wrap: wrap; gap: 1rem; }
+
+  .brief__alt {
+    margin-top: clamp(2.5rem, 5vw, 4rem);
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--color-line);
+    font-size: 0.9375rem;
+    color: var(--color-tin);
+    max-width: 46rem;
+  }
+
+  @media (min-width: 620px) {
+    .fld__row { grid-template-columns: 1fr 1fr; }
+  }
+  @media (min-width: 860px) {
+    .brief__size { grid-template-columns: 1fr 1fr; align-items: end; gap: 2.5rem; }
+  }
+</style>

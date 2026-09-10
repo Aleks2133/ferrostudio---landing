@@ -1,0 +1,30 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Strona nie znaleziona — Ferro Studio"
+  description="Ta strona nie istnieje lub została przeniesiona."
+  path="/404"
+>
+  <section class="nf section-y">
+    <div class="container-x">
+      <p class="mono" style="color:var(--color-tin)">404</p>
+      <h1>Strony nie znaleziono</h1>
+      <p class="nf__lead">
+        Ten adres nie istnieje lub został przeniesiony. Wróć na stronę główną albo napisz do nas.
+      </p>
+      <div class="nf__actions">
+        <a href="/" class="btn btn-primary">Strona główna</a>
+        <a href="/kontakt" class="btn btn-ghost">Kontakt</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .nf { min-height: 60vh; display: flex; align-items: center; }
+  .nf h1 { font-size: clamp(2.25rem, 7vw, 4.5rem); margin-top: 0.6rem; }
+  .nf__lead { margin-top: 1.25rem; color: var(--color-tin); font-size: 1.05rem; max-width: 44ch; }
+  .nf__actions { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 2.5rem; }
+</style>

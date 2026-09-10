@@ -1,0 +1,449 @@
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------ */
+/*  Fonts (self-hosted, latin + latin-ext)                            */
+/* ------------------------------------------------------------------ */
+@font-face {
+  font-family: "Big Shoulders Display";
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url("/fonts/big-shoulders-display-latin-900-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215,
+    U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Big Shoulders Display";
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url("/fonts/big-shoulders-display-latin-ext-900-normal.woff2") format("woff2");
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB,
+    U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "IBM Plex Sans";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/ibm-plex-sans-latin-400-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215,
+    U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "IBM Plex Sans";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/ibm-plex-sans-latin-ext-400-normal.woff2") format("woff2");
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB,
+    U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "IBM Plex Sans";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("/fonts/ibm-plex-sans-latin-500-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215,
+    U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "IBM Plex Sans";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("/fonts/ibm-plex-sans-latin-ext-500-normal.woff2") format("woff2");
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB,
+    U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "IBM Plex Sans";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("/fonts/ibm-plex-sans-latin-600-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215,
+    U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "IBM Plex Sans";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("/fonts/ibm-plex-sans-latin-ext-600-normal.woff2") format("woff2");
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB,
+    U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Design tokens                                                     */
+/* ------------------------------------------------------------------ */
+@font-face {
+  font-family: "IBM Plex Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/ibm-plex-mono-latin-400-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215,
+    U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "IBM Plex Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/ibm-plex-mono-latin-ext-400-normal.woff2") format("woff2");
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB,
+    U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@theme {
+  --color-bg: #ffffff;
+  --color-panel: #f3f1ec;
+  --color-stone: #edeae3;
+  --color-onyx: #191815;
+  /* Chłodna surowa stal — druga oś napięcia wobec ciepłej rdzy. Tła sekcji
+     technicznych (specyfikacje, tabele, strefa dla architektów). */
+  --color-graphite: #2a2c2f;
+  --color-rust: #c1502e;
+  --color-rust-lite: #d9642e;
+  /* Najwyższa półka. Maksymalnie 2–3 wystąpienia na całej stronie — rzadkość jest sygnałem. */
+  --color-brass: #b08d57;
+  --color-tin: #78736a;
+  --color-line: #e2e0da;
+
+  /* Podmiana kroju nagłówkowego = zmiana tej jednej zmiennej + jednego bloku
+     @font-face wyżej. Reszta systemu nie wie, jaki krój jest podpięty. */
+  --font-display: "Big Shoulders Display", "Arial Narrow", "Roboto Condensed",
+    system-ui, sans-serif;
+  --font-sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", Roboto,
+    sans-serif;
+  /* Notacja techniczna: wymiary, tolerancje, id slotów. Wyłącznie przy liczbach
+     i identyfikatorach — monospace jako ozdoba jest antywzorcem (brief 7.1).
+     Faza 1 podmieni stos na self-hostowany IBM Plex Mono. */
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas,
+    monospace;
+
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ------------------------------------------------------------------ */
+/*  Base                                                              */
+/* ------------------------------------------------------------------ */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    scroll-padding-top: 5rem;
+    /* Strona ma stały, autorski motyw (nie reaguje na tryb ciemny systemu) —
+       bez tej deklaracji telefony z Androidem (Chrome/Samsung Internet)
+       potrafią samodzielnie "poprawiać" kolory heurystyką wymuszonego trybu
+       ciemnego, np. zmieniając rdzawy pomarańcz przycisku na czerwony. */
+    color-scheme: light;
+  }
+
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-onyx);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+
+  /* Krój nagłówkowy wyłącznie w bardzo dużej skali — poniżej ~40px traci
+     charakter i zaczyna wyglądać na darmowy font. Wszystko mniejsze to Plex Sans. */
+  h1, h2 {
+    font-family: var(--font-display);
+    font-weight: 900;
+    line-height: 0.92;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+  }
+  h3, h4 {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: -0.005em;
+    text-transform: none;
+  }
+
+  p { text-wrap: pretty; }
+  h1, h2, h3, h4 { text-wrap: balance; }
+
+  :focus-visible {
+    outline: 2px solid var(--color-rust);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background: var(--color-rust);
+    color: var(--color-bg);
+  }
+
+  img { max-width: 100%; height: auto; }
+}
+
+/* ------------------------------------------------------------------ */
+/*  Utilities / components                                            */
+/* ------------------------------------------------------------------ */
+@layer components {
+  .container-x {
+    width: 100%;
+    max-width: 1280px;
+    margin-inline: auto;
+    padding-inline: clamp(1.25rem, 5vw, 5rem);
+  }
+
+  .section-y {
+    padding-block: clamp(3rem, 6vw, 5rem);
+  }
+
+  .eyebrow {
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: 0.8125rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-tin);
+  }
+
+  /* short rust rule under H2 */
+  .rule {
+    display: block;
+    width: 48px;
+    height: 2px;
+    background: var(--color-graphite);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.5s var(--ease-out-quint);
+  }
+  .in-view .rule { transform: scaleX(1); }
+
+  /* buttons */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 0.95rem;
+    letter-spacing: 0.01em;
+    padding: 0.95rem 1.6rem;
+    border: 1px solid transparent;
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s,
+      transform 0.05s;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .btn:active { transform: translateY(1px); }
+
+  .btn-primary {
+    background: var(--color-rust);
+    color: var(--color-bg);
+  }
+  .btn-primary:hover { background: #a8421f; }
+
+  .btn-ghost {
+    border-color: var(--color-tin);
+    color: var(--color-onyx);
+  }
+  .btn-ghost:hover {
+    border-color: var(--color-rust);
+    color: var(--color-rust);
+  }
+  .btn-ghost .arrow { transition: transform 0.2s; }
+  .btn-ghost:hover .arrow { transform: translateX(4px); }
+
+  /* Sekcje techniczne: chłodna stal. Druga oś napięcia wobec ciepłej rdzy. */
+  .on-graphite { background: var(--color-graphite); color: var(--color-bg); }
+
+  /* on onyx sections */
+  .on-onyx { background: var(--color-onyx); color: var(--color-bg); }
+  /* Nie var(--color-tin) — na onyksie #78736a daje ~3.8:1, poniżej WCAG AA
+     (4.5:1) dla drobnego tekstu. Ta sama jasna rgba co .on-graphite niżej. */
+  .on-onyx .eyebrow { color: rgba(237, 234, 227, 0.55); }
+  .on-onyx .btn-primary { background: var(--color-rust-lite); }
+  .on-onyx .btn-primary:hover { background: #c1502e; }
+  .on-onyx .btn-ghost { border-color: rgba(237, 234, 227, 0.4); color: var(--color-bg); }
+  .on-onyx .btn-ghost:hover { border-color: var(--color-rust-lite); color: var(--color-rust-lite); }
+  .on-onyx .rule { background: rgba(237, 234, 227, 0.35); }
+  .on-onyx .shead__idx { color: var(--color-rust-lite); }
+  .on-onyx .section-line { background: rgba(237, 234, 227, 0.16); }
+
+  .on-graphite .eyebrow { color: rgba(237, 234, 227, 0.55); }
+  .on-graphite .btn-primary { background: var(--color-rust-lite); color: var(--color-bg); }
+  .on-graphite .btn-primary:hover { background: #c1502e; }
+  .on-graphite .btn-ghost { border-color: rgba(237, 234, 227, 0.4); color: var(--color-bg); }
+  .on-graphite .btn-ghost:hover { border-color: var(--color-rust-lite); color: var(--color-rust-lite); }
+  .on-graphite .rule { background: rgba(237, 234, 227, 0.35); }
+
+  /* Link tekstowy: bez strzałki, podkreślenie animowane mechanizmem cięcia.
+     Rdza zarezerwowana dla akcji głównych, więc link jest onyksowy. */
+  .link-cut {
+    display: inline-block;
+    font-weight: 600;
+    color: var(--color-onyx);
+    text-decoration: none;
+    padding-bottom: 0.15rem;
+    background-image: linear-gradient(var(--color-rust), var(--color-rust));
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+    background-size: 0% 1px;
+    transition: background-size 0.45s var(--ease-out-quint);
+  }
+  .link-cut::after {
+    content: "";
+    display: block;
+    height: 1px;
+    background: currentColor;
+    opacity: 0.28;
+    margin-top: -1px;
+  }
+  .link-cut:hover { background-size: 100% 1px; }
+  .on-onyx .link-cut,
+  .on-graphite .link-cut { color: var(--color-bg); }
+  .on-onyx .link-cut,
+  .on-graphite .link-cut { background-image: linear-gradient(var(--color-rust-lite), var(--color-rust-lite)); }
+
+  /* Notacja techniczna — wyłącznie liczby, wymiary, identyfikatory. */
+  .mono {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    font-size: 0.8125rem;
+    letter-spacing: 0;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/*  Reveal cięciem — mechanizm sygnaturowy                            */
+/* ------------------------------------------------------------------ */
+/* Jeden mechanizm ruchu w całym projekcie, wyprowadzony wprost z tego, co
+   firma robi: treść odsłania się przesuwającym się frontem, a na jego czele
+   biegnie cienka jasna linia, gasnąca z opóźnieniem — jak stygnąca szczelina
+   za wiązką. Zastępuje standardowy fade+translateY, który czyta się jak default.
+
+   To NIE jest odrzucony koncept „linii cięcia przez ekran" (tamten był jedną
+   linią przez cały viewport). To mikro-mechanizm na poziomie elementu.
+
+   Kierunek: domyślnie od lewej. `data-reveal="right"` odwraca — używane
+   w prawych kolumnach, żeby kompozycja tięła się do środka, nie w jedną stronę.
+
+   Stany są za `html.js` — bez JS wszystko jest po prostu widoczne. */
+.js [data-reveal] {
+  position: relative;
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path 0.7s var(--ease-out-quint);
+  transition-delay: calc(var(--i, 0) * 80ms);
+  will-change: clip-path;
+}
+.js [data-reveal="right"] { clip-path: inset(0 0 0 100%); }
+
+/* Końcowy stan celowo wychodzi 2px poza obrys — inset(0) zostawiłby element
+   przyciętym na stałe i obcinał outline focusa oraz elementy wystające. */
+.js [data-reveal].in-view {
+  clip-path: inset(-2px);
+  will-change: auto;
+}
+
+.js [data-reveal]::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 2px;
+  background: var(--cut-line, var(--color-rust));
+  opacity: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+.js [data-reveal].in-view::after {
+  animation: cut-line 0.7s var(--ease-out-quint) forwards;
+  animation-delay: calc(var(--i, 0) * 80ms);
+}
+.js [data-reveal="right"].in-view::after { animation-name: cut-line-rev; }
+
+@keyframes cut-line {
+  from { left: 0; opacity: 1; }
+  78% { opacity: 1; }
+  to { left: calc(100% - 2px); opacity: 0; }
+}
+@keyframes cut-line-rev {
+  from { left: 100%; opacity: 1; }
+  78% { opacity: 1; }
+  to { left: 0; opacity: 0; }
+}
+
+.on-onyx [data-reveal],
+.on-graphite [data-reveal] { --cut-line: var(--color-rust-lite); }
+
+/* Zdjęcia osiadają z delikatnego zoomu — to zostaje z v1, jest dobre. */
+.js .aslot[data-reveal] :is(img, video) {
+  transform: scale(1.06);
+  transition: transform 1.4s var(--ease-out-quint);
+}
+.js .aslot[data-reveal].in-view :is(img, video) { transform: none; }
+
+/* line-mask reveal for headings */
+.reveal-lines .rl { display: block; overflow: hidden; }
+.js .reveal-lines .rl > span {
+  display: block;
+  transform: translateY(105%);
+  transition: transform 0.8s var(--ease-out-quint);
+  transition-delay: calc(var(--i, 0) * 80ms + 0.05s);
+}
+.js .reveal-lines.in-view .rl > span { transform: none; }
+
+/* ------------------------------------------------------------------ */
+/*  Prose (legal / content pages)                                     */
+/* ------------------------------------------------------------------ */
+.prose { max-width: 68ch; }
+.prose h2 {
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  margin: 2.75rem 0 1rem;
+}
+.prose h3 {
+  font-size: 1.15rem;
+  margin: 1.75rem 0 0.6rem;
+}
+.prose p, .prose li { color: color-mix(in srgb, var(--color-onyx) 82%, transparent); }
+.prose p { margin-bottom: 1rem; }
+.prose ul, .prose ol { margin: 0 0 1rem 1.25rem; display: flex; flex-direction: column; gap: 0.4rem; }
+.prose ul { list-style: square; }
+.prose ol { list-style: decimal; }
+.prose a { color: var(--color-rust); text-decoration: underline; text-underline-offset: 2px; }
+.prose strong { font-weight: 600; }
+.prose hr { border: 0; border-top: 1px solid var(--color-line); margin: 2.5rem 0; }
+.prose :first-child { margin-top: 0; }
+
+/* diagonal hatch texture for onyx sections */
+.hatch {
+  background-image: repeating-linear-gradient(
+    114deg,
+    rgba(237, 234, 227, 0.035) 0 1px,
+    transparent 1px 14px
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-delay: 0ms !important;
+    transition-duration: 0.001ms !important;
+  }
+  .js [data-reveal] { clip-path: none; }
+  .js [data-reveal]::after { display: none; }
+  .js .aslot[data-reveal] :is(img, video) { transform: none; }
+  .js .reveal-lines .rl > span { transform: none; }
+}

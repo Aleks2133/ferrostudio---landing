@@ -1,0 +1,310 @@
+---
+import { Image } from 'astro:assets';
+import { NAV_BY_LANG, NAV_CTA_BY_LANG } from '../i18n/nav';
+import { getLang, home, useTranslations, normalize } from '../i18n';
+import logo from '../assets/logo2.png';
+
+const current = normalize(Astro.url.pathname);
+const lang = getLang(current);
+const t = useTranslations(lang);
+
+const NAV = NAV_BY_LANG[lang];
+const NAV_CTA = NAV_CTA_BY_LANG[lang];
+---
+
+<header class="hdr" data-header>
+  <div class="hdr__bar">
+    <a href={home(lang)} class="hdr__brand" aria-label={t('nav.home')}>
+      <Image
+        src={logo}
+        alt="Ferro Studio"
+        width={280}
+        height={93}
+        densities={[1, 2, 3]}
+        loading="eager"
+        fetchpriority="high"
+      />
+    </a>
+
+    <nav class="hdr__nav" aria-label={t('nav.aria')}>
+      {
+        NAV.map((item) => (
+          <a
+            href={item.href}
+            class:list={['navlink', { 'is-active': current === item.href }]}
+            aria-current={current === item.href ? 'page' : undefined}
+          >
+            <span class="navlink__txt">{item.label}</span>
+          </a>
+        ))
+      }
+      <a href={NAV_CTA.href} class="hdr__cta">{NAV_CTA.label}</a>
+    </nav>
+
+    <button
+      type="button"
+      class="hdr__burger"
+      aria-label={t('nav.open')}
+      aria-expanded="false"
+      aria-controls="mobile-menu"
+      data-label-open={t('nav.open')}
+      data-label-close={t('nav.close')}
+    >
+      <span></span><span></span>
+    </button>
+  </div>
+
+  <div class="hdr__edge" aria-hidden="true">
+    <span class="hdr__scale"></span>
+  </div>
+</header>
+
+<!-- Nie atrybut `hidden` — Tailwind Preflight ma `[hidden]{display:none!important}`,
+     które bije jakąkolwiek regułę komponentu próbującą to nadpisać (nawet z
+     wyższą specyficznością), więc panel realnie nigdy się nie pokazywał mimo
+     poprawnie przełączanej klasy `is-open`. Widoczność/dostępność za CSS
+     (`visibility` + `transform`) niżej, nie za atrybutem. -->
+<div id="mobile-menu" class="mobile-menu">
+  <nav aria-label={t('nav.mobile')}>
+    {
+      [...NAV, NAV_CTA].map((item, i) => (
+        <a href={item.href} style={`--i:${i}`} class:list={{ 'is-active': current === item.href }}>
+          {item.label}
+        </a>
+      ))
+    }
+  </nav>
+</div>
+
+<style>
+  .hdr {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: color-mix(in srgb, var(--color-bg) 90%, transparent);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    transition: background-color 0.2s;
+  }
+
+  .hdr__bar {
+    width: 100%;
+    max-width: 1440px;
+    margin-inline: auto;
+    padding-inline: clamp(1rem, 4vw, 3rem);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+  }
+
+  .hdr__brand { display: inline-flex; align-items: center; }
+  .hdr__brand img {
+    height: 26px;
+    width: auto;
+    display: block;
+    transition: height 0.2s;
+  }
+
+  /* structural bottom edge — technical-drawing detail */
+  .hdr__edge {
+    position: relative;
+    height: 0;
+    border-bottom: 1px solid var(--color-line);
+  }
+  .hdr__scale {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 2px;
+    background: var(--color-graphite);
+    transform: scaleX(var(--sp, 0));
+    transform-origin: left;
+    transition: transform 0.12s linear;
+  }
+
+  html.is-scrolled .hdr { background: color-mix(in srgb, var(--color-bg) 96%, transparent); }
+
+  /* desktop nav */
+  .hdr__nav { display: none; }
+
+  /* W headerze jest miejsce tylko na jeden rdzawy akcent — wydajemy go na „Wycenę". */
+  .hdr__cta {
+    margin-left: 0.5rem;
+    padding: 0.6rem 1.15rem;
+    background: var(--color-rust);
+    color: var(--color-bg);
+    font-weight: 600;
+    font-size: 0.9375rem;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background-color 0.2s;
+  }
+  .hdr__cta:hover { background: #a8421f; }
+
+  @media (min-width: 1024px) {
+    .hdr__bar { height: 92px; }
+    .hdr__brand img { height: 40px; }
+
+    .hdr__nav {
+      display: flex;
+      align-items: center;
+      gap: clamp(1.25rem, 2.6vw, 2.5rem);
+    }
+    .navlink {
+      display: inline-flex;
+      text-decoration: none;
+      color: var(--color-onyx);
+      position: relative;
+      padding-block: 0.35rem;
+    }
+    .navlink__txt {
+      font-weight: 500;
+      font-size: 0.9375rem;
+      letter-spacing: 0.01em;
+    }
+    .navlink::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      height: 2px;
+      background: var(--color-rust);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.22s var(--ease-out-quint);
+    }
+    .navlink:hover { color: var(--color-rust); }
+    .navlink:hover::after,
+    .navlink.is-active::after { transform: scaleX(1); }
+  }
+
+  /* burger — hidden by default, shown only below the desktop breakpoint */
+  .hdr__burger {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 6px;
+    width: 40px;
+    height: 40px;
+    padding: 9px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    margin-right: -9px;
+  }
+  @media (max-width: 1023px) {
+    .hdr__burger { display: inline-flex; }
+  }
+  .hdr__burger span {
+    display: block;
+    height: 2px;
+    width: 100%;
+    background: var(--color-onyx);
+    transition: transform 0.25s, opacity 0.2s;
+  }
+  .hdr__burger[aria-expanded='true'] span:first-child { transform: translateY(4px) rotate(45deg); }
+  .hdr__burger[aria-expanded='true'] span:last-child { transform: translateY(-4px) rotate(-45deg); }
+
+  /* mobile menu */
+  .mobile-menu {
+    position: fixed;
+    inset: 0;
+    z-index: 49;
+    background: var(--color-onyx);
+    color: var(--color-bg);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: clamp(1.5rem, 8vw, 4rem);
+    transform: translateX(100%);
+    /* visibility poza ekranem — nie `hidden`/`display`, patrz komentarz przy
+       znaczniku. `visibility` przełącza się z opóźnieniem dopiero po
+       zjechaniu poza kadr, żeby panel nie znikał w trakcie animacji. */
+    visibility: hidden;
+    transition: transform 0.32s var(--ease-out-quint), visibility 0s linear 0.32s;
+  }
+  .mobile-menu.is-open {
+    transform: none;
+    visibility: visible;
+    transition: transform 0.32s var(--ease-out-quint), visibility 0s linear 0s;
+  }
+  .mobile-menu nav { display: flex; flex-direction: column; gap: 0.4rem; }
+  .mobile-menu nav a {
+    display: flex;
+    align-items: baseline;
+    gap: 0.9rem;
+    font-family: var(--font-display);
+    font-weight: 900;
+    text-transform: uppercase;
+    font-size: clamp(1.75rem, 8vw, 2.5rem);
+    color: var(--color-bg);
+    text-decoration: none;
+    padding: 0.35rem 0 0.35rem 0.9rem;
+    border-left: 2px solid transparent;
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  .mobile-menu nav a span {
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: 0.75rem;
+    /* Nie var(--color-tin) — na onyksie daje ~3.8:1, poniżej WCAG AA (4.5:1)
+       dla drobnego tekstu; to menu na pełny ekran mobile, więc się liczy. */
+    color: rgba(237, 234, 227, 0.55);
+  }
+  .mobile-menu.is-open nav a {
+    opacity: 1;
+    transform: none;
+    transition: opacity 0.4s var(--ease-out-quint), transform 0.4s var(--ease-out-quint);
+    transition-delay: calc(var(--i) * 55ms + 80ms);
+  }
+  .mobile-menu nav a.is-active { border-left-color: var(--color-rust-lite); }
+
+  @media (min-width: 1024px) { .mobile-menu { display: none; } }
+  @media (prefers-reduced-motion: reduce) {
+    .mobile-menu, .mobile-menu.is-open nav a { transition: none; }
+  }
+</style>
+
+<script>
+  const root = document.documentElement;
+  const hdr = document.querySelector<HTMLElement>('.hdr');
+  let ticking = false;
+  const onScroll = () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      root.classList.toggle('is-scrolled', window.scrollY > 8);
+      const max = root.scrollHeight - root.clientHeight;
+      hdr?.style.setProperty('--sp', max > 0 ? String(Math.min(1, window.scrollY / max)) : '0');
+      ticking = false;
+    });
+  };
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll, { passive: true });
+
+  const burger = document.querySelector<HTMLButtonElement>('.hdr__burger');
+  const menu = document.getElementById('mobile-menu');
+  if (burger && menu) {
+    const setOpen = (open: boolean) => {
+      burger.setAttribute('aria-expanded', String(open));
+      // Etykieta przychodzi z serwera w `data-*`, żeby skrypt nie musiał
+      // wiedzieć, w jakim języku jest strona.
+      burger.setAttribute(
+        'aria-label',
+        (open ? burger.dataset.labelClose : burger.dataset.labelOpen) ?? ''
+      );
+      menu.classList.toggle('is-open', open);
+      document.body.style.overflow = open ? 'hidden' : '';
+    };
+    burger.addEventListener('click', () => setOpen(burger.getAttribute('aria-expanded') !== 'true'));
+    menu.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => setOpen(false)));
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') setOpen(false);
+    });
+  }
+</script>

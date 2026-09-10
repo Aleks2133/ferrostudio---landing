@@ -1,0 +1,278 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import SectionHeader from '../components/SectionHeader.astro';
+import { SITE } from '../config';
+import procesPhoto from '../assets/photos/home-proces-warsztat.jpg';
+
+const checklist = [
+  'Plik wektorowy (AI, SVG, DXF) lub zdjęcie/szkic pomysłu',
+  'Orientacyjny rozmiar (szerokość lub wysokość)',
+  'Miejsce montażu — wnętrze czy zewnątrz, rodzaj podłoża',
+  'Oczekiwany termin realizacji',
+];
+
+const faqs = [
+  {
+    q: 'Jaka jest minimalna wielkość zamówienia?',
+    a: 'Realizujemy zarówno pojedyncze małe elementy, jak i duże realizacje — nie mamy formalnego minimum, choć przy bardzo małych projektach koszt jednostkowy bywa wyższy.',
+  },
+  {
+    q: 'Czy zajmujecie się montażem?',
+    a: 'Wysyłamy gotowy element wraz z elementami montażowymi (np. dystansami) i wskazówkami. Montaż zwykle wykonuje klient lub lokalna ekipa — na życzenie doradzimy, jak go przeprowadzić.',
+  },
+  {
+    q: 'Mam tylko szkic na kartce, wystarczy?',
+    a: 'Tak — prześlij zdjęcie szkicu lub po prostu opisz pomysł. Na tej podstawie przygotujemy projekt gotowy do wyceny.',
+  },
+  {
+    q: 'Czy mogę zamówić kilka sztuk tego samego elementu?',
+    a: 'Tak, przy większych ilościach koszt jednostkowy zwykle spada — napisz, ile sztuk potrzebujesz.',
+  },
+];
+
+const steps = [
+  {
+    n: '01',
+    k: 'Projekt',
+    v: 'Wysyłasz logo, grafikę wektorową albo pomysł na dekorację. Jeśli nie masz gotowego pliku — opisz zamysł, doradzimy materiał, rozmiar i sposób montażu.',
+  },
+  {
+    n: '02',
+    k: 'Wycena',
+    v: 'Na podstawie projektu przygotowujemy wycenę: cenę, materiał, wykończenie i orientacyjny termin realizacji. Bez ukrytych kosztów.',
+  },
+  {
+    n: '03',
+    k: 'Akceptacja i zaliczka',
+    v: 'Po akceptacji wyceny ustalamy szczegóły (wymiary, sposób montażu) i — przy większych zamówieniach — zaliczkę.',
+  },
+  {
+    n: '04',
+    k: 'Cięcie i wykończenie',
+    v: 'Wycinamy element, czyścimy krawędzie i nakładamy wybrane wykończenie (surowe, malowane proszkowo, patyna lub lakier).',
+  },
+  {
+    n: '05',
+    k: 'Kontrola jakości',
+    v: 'Każda realizacja przechodzi kontrolę przed wysyłką — sprawdzamy wymiary, krawędzie i wykończenie.',
+  },
+  {
+    n: '06',
+    k: 'Pakowanie i wysyłka',
+    v: 'Bezpieczne pakowanie i kurier pod Twój adres — realizacje wysyłamy na terenie całej Polski.',
+  },
+];
+
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+};
+
+const howToJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'HowTo',
+  name: 'Jak zamówić element z metalu ciętego na wymiar',
+  description:
+    'Sześć kroków od przesłania projektu do odbioru gotowego elementu z metalu ciętego na wymiar.',
+  step: steps.map((s, i) => ({
+    '@type': 'HowToStep',
+    position: i + 1,
+    name: s.k,
+    text: s.v,
+    url: `${SITE.url}/jak-zamawiac#krok-${s.n}`,
+  })),
+};
+---
+
+<BaseLayout
+  title="Jak zamawiać — Ferro Studio"
+  description="Krok po kroku: jak zamówić logotyp, napis lub dekorację z metalu ciętego na wymiar w Ferro Studio."
+  path="/jak-zamawiac"
+  jsonLd={[faqJsonLd, howToJsonLd]}
+>
+  <PageHero breadcrumb={[{ label: 'Jak zamawiać' }]} index="proces">
+    <h1>Jak zamawiać</h1>
+    <p class="phero__lead">
+      Od pierwszego kontaktu do przesyłki pod drzwiami — pełny proces zamówienia
+      indywidualnego elementu z metalu.
+    </p>
+  </PageHero>
+
+  <section class="page section-y">
+    <div class="container-x">
+      <figure class="page__photo" data-reveal>
+        <Image
+          src={procesPhoto}
+          alt="Maszyna w trakcie precyzyjnego cięcia metalowej blachy"
+          widths={[480, 800, 1200, 1600]}
+          sizes="(min-width:1000px) 1000px, 100vw"
+          loading="lazy"
+        />
+      </figure>
+
+      <ol class="steps">
+        {
+          steps.map((s, i) => (
+            <li id={`krok-${s.n}`} data-reveal style={`--i:${i}`}>
+              <span class="steps__n">{s.n}</span>
+              <h2>{s.k}</h2>
+              <p>{s.v}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section class="checklist section-y">
+    <div class="container-x">
+      <SectionHeader index="01 / przygotowanie" title="Co przygotować przed wysłaniem zapytania" />
+      <ul class="checklist__list">
+        {checklist.map((c, i) => <li data-reveal style={`--i:${i}`}>{c}</li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section class="pricing section-y">
+    <div class="container-x">
+      <SectionHeader index="02 / czas i koszt" title="Ile to zajmie i ile będzie kosztować" />
+      <p class="pricing__note">
+        Nie stosujemy cennika za sztukę — cena zależy od materiału, wielkości i wykończenia.
+        Wycenę wraz z orientacyjnym terminem realizacji przygotowujemy w 1–2 dni robocze
+        od zapytania, zawsze razem z ofertą.
+      </p>
+    </div>
+  </section>
+
+  <section class="faq section-y">
+    <div class="container-x">
+      <div class="faq__head">
+        <p class="faq__idx mono">pytania o zamawianie</p>
+        <h2>Zanim złożysz zamówienie</h2>
+      </div>
+      <div class="faq__list">
+        {
+          faqs.map((f, i) => (
+            <details class="faq__item" data-reveal style={`--i:${i}`}>
+              <summary>{f.q}</summary>
+              <p>{f.a}</p>
+            </details>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="cta section-y on-onyx">
+    <div class="container-x cta__row">
+      <div data-reveal>
+        <h2>Masz plik lub pomysł?</h2>
+        <p class="cta__lead">Napisz do nas — odezwiemy się z wyceną w 1–2 dni robocze.</p>
+      </div>
+      <a href="/kontakt" class="btn btn-primary" data-reveal style="--i:1">Zapytaj o wycenę</a>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .faq__idx { color: var(--color-tin); letter-spacing: 0.08em; margin-bottom: 0.75rem; }
+  .page__photo { margin: 0 0 clamp(2rem, 4vh, 3rem); }
+
+  .steps {
+    list-style: none;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: clamp(2rem, 4vw, 2.75rem);
+  }
+  .steps__n {
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: 0.8125rem;
+    color: var(--color-rust);
+    display: block;
+    margin-bottom: 0.9rem;
+    padding-bottom: 0.9rem;
+    border-bottom: 1px solid var(--color-line);
+  }
+  .steps h2 { font-size: 1.15rem; margin-bottom: 0.5rem; }
+  .steps p { color: color-mix(in srgb, var(--color-onyx) 72%, transparent); font-size: 0.925rem; max-width: 38ch; }
+
+  .cta__row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+  }
+  .cta__row h2 { font-size: clamp(1.75rem, 4vw, 2.75rem); margin: 0.6rem 0 0.5rem; color: var(--color-bg); }
+  .cta__lead { color: rgba(237, 234, 227, 0.72); max-width: 38ch; }
+
+  .checklist { background: var(--color-panel); }
+  .checklist__list {
+    list-style: none;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    max-width: 46rem;
+  }
+  .checklist__list li {
+    padding-left: 1.3rem;
+    position: relative;
+    color: color-mix(in srgb, var(--color-onyx) 82%, transparent);
+  }
+  .checklist__list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.6em;
+    width: 9px;
+    height: 2px;
+    background: var(--color-rust);
+  }
+  @media (min-width: 640px) { .checklist__list { grid-template-columns: repeat(2, 1fr); } }
+
+  .pricing__note { color: color-mix(in srgb, var(--color-onyx) 78%, transparent); max-width: 60ch; }
+
+  .faq { background: var(--color-panel); }
+  .faq__head { text-align: center; margin-bottom: 2.5rem; }
+  .faq h2 { font-size: clamp(1.75rem, 4vw, 2.5rem); margin-top: 0.6rem; }
+  .faq__list {
+    display: flex;
+    flex-direction: column;
+    max-width: 62ch;
+    margin-inline: auto;
+    border-top: 1px solid var(--color-line);
+  }
+  .faq__item { border-bottom: 1px solid var(--color-line); padding: 1.25rem 0; }
+  .faq__item summary {
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1.05rem;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .faq__item summary::-webkit-details-marker { display: none; }
+  .faq__item summary::after {
+    content: '+';
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    color: var(--color-rust);
+    flex: 0 0 auto;
+    transition: transform 0.2s;
+  }
+  .faq__item[open] summary::after { transform: rotate(45deg); }
+  .faq__item p { margin-top: 0.9rem; color: color-mix(in srgb, var(--color-onyx) 72%, transparent); }
+
+  @media (min-width: 640px) { .steps { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1000px) { .steps { grid-template-columns: repeat(3, 1fr); gap: 2.5rem; } }
+</style>

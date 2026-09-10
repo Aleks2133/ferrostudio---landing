@@ -1,0 +1,96 @@
+---
+import { Image } from 'astro:assets';
+import { SITE } from '../config';
+import { FOOTER_NAV_BY_LANG, LEGAL_NAV } from '../i18n/nav';
+import { getLang, useTranslations } from '../i18n';
+import logo from '../assets/logo2.png';
+
+const lang = getLang(Astro.url.pathname);
+const t = useTranslations(lang);
+
+const FOOTER_NAV = FOOTER_NAV_BY_LANG[lang];
+
+const year = new Date().getFullYear();
+const legalNote = t('footer.legalNote');
+---
+
+<footer class="ft">
+  <div class="container-x">
+    <div class="ft__grid">
+      <div class="ft__brand">
+        <Image src={logo} alt="Ferro Studio" width={300} height={100} densities={[1, 2]} loading="lazy" />
+        <p class="ft__tag">{t('footer.tagline')}</p>
+        <p class="ft__ship">{t('footer.shipping')}</p>
+      </div>
+
+      <nav aria-label={t('footer.ordAria')}>
+        <h2 class="ft__h">{t('footer.ordering')}</h2>
+        <ul>{FOOTER_NAV.map((i) => <li><a href={i.href}>{i.label}</a></li>)}</ul>
+      </nav>
+
+      <div>
+        <h2 class="ft__h">{t('footer.contact')}</h2>
+        <ul>
+          <li><a href={`mailto:${SITE.email}`}>{SITE.email}</a></li>
+          <li><a href={SITE.phoneHref}>{SITE.phone}</a></li>
+          <li class="muted">{t('footer.area')}</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="ft__bottom">
+      <p>© {year} {SITE.name}</p>
+      <p class="ft__legal">
+        {LEGAL_NAV.map((l) => <a href={l.href} lang="pl">{l.label}</a>)}
+        {/* W wersji EN mówimy wprost, że dokumenty są po polsku — zamiast
+            wysyłać czytelnika w niespodziankę. */}
+        {legalNote && <span class="ft__legalnote">{legalNote}</span>}
+      </p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .ft { border-top: 1px solid var(--color-onyx); padding-top: clamp(2.25rem, 5vh, 3.25rem); padding-bottom: 2rem; }
+  .ft__grid { display: grid; grid-template-columns: 1fr; gap: 2rem; }
+  .ft__brand img { height: 34px; width: auto; display: block; }
+  .ft__tag { max-width: 34ch; margin-top: 1.1rem; color: color-mix(in srgb, var(--color-onyx) 78%, transparent); }
+  .ft__ship { margin-top: 0.75rem; font-weight: 600; }
+  .ft__h {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 0.75rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-tin);
+    margin-bottom: 0.9rem;
+  }
+  .ft ul { list-style: none; display: flex; flex-direction: column; gap: 0.55rem; }
+  .ft a { color: var(--color-onyx); text-decoration: none; }
+  .ft a:hover { color: var(--color-rust); }
+  .muted { color: var(--color-tin); }
+  .ft__bottom {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: clamp(2rem, 4vh, 2.75rem);
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--color-line);
+    font-size: 0.875rem;
+    color: var(--color-tin);
+  }
+  .ft__legal { display: flex; flex-wrap: wrap; align-items: baseline; gap: 1.25rem; }
+  .ft__legalnote { flex-basis: 100%; font-size: 0.8125rem; }
+
+  @media (min-width: 640px) {
+    .ft__grid { grid-template-columns: repeat(2, 1fr); }
+    .ft__brand { grid-column: 1 / -1; }
+  }
+  @media (min-width: 1024px) {
+    .ft__grid { grid-template-columns: 1.8fr repeat(2, 1fr); }
+    .ft__brand { grid-column: auto; }
+    .ft__legalnote { flex-basis: auto; }
+  }
+</style>

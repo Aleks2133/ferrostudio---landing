@@ -1,0 +1,65 @@
+---
+/**
+ * Nagłówek sekcji, wersja 2 — bez eyebrow.
+ *
+ * Etykiety WERSALIKAMI nad każdym nagłówkiem to jeden z najczęstszych tellów
+ * szablonu (brief 7.1). Orientację, jeśli jest potrzebna, daje numer sekcji
+ * w notacji technicznej na lewym marginesie — nie kolejna etykieta.
+ *
+ * Numer jest opcjonalny i celowo rzadki: numerujemy tylko tam, gdzie kolejność
+ * coś znaczy, nigdy „dla porządku".
+ */
+interface Props {
+  title: string;
+  lead?: string;
+  /** krótki podpis techniczny na marginesie, np. numer sekcji */
+  index?: string;
+  /** kierunek odsłonięcia mechanizmem cięcia */
+  dir?: 'left' | 'right';
+  /** dużą skalę stosujemy w sekcjach otwierających i domykających */
+  size?: 'default' | 'large';
+  class?: string;
+}
+
+const { title, lead, index, dir = 'left', size = 'default', class: cls = '' } = Astro.props;
+---
+
+<div class:list={['shead', `shead--${size}`, cls]} data-reveal={dir === 'right' ? 'right' : true}>
+  {index && <span class="shead__idx mono">{index}</span>}
+  <h2 set:html={title} />
+  {lead && <p class="shead__lead">{lead}</p>}
+</div>
+
+<style>
+  .shead {
+    margin-bottom: clamp(1.75rem, 4vw, 2.75rem);
+    display: grid;
+    gap: 0.9rem;
+  }
+  .shead__idx {
+    color: var(--color-tin);
+    letter-spacing: 0.08em;
+  }
+  .shead h2 {
+    font-size: clamp(2rem, 4.5vw, 3.25rem);
+    line-height: 0.95;
+    max-width: 18ch;
+  }
+  .shead--large h2 {
+    font-size: clamp(2.5rem, 7vw, 5rem);
+    max-width: 14ch;
+  }
+  .shead__lead {
+    max-width: 52ch;
+    font-size: 1.0625rem;
+    color: color-mix(in srgb, var(--color-onyx) 74%, transparent);
+  }
+  /* `:global()` konieczne — patrz komentarz w BeforeAfter.astro: bez niego
+     Astro wymaga atrybutu zasięgu SectionHeader też na `.on-onyx`/`.on-graphite`,
+     a tę klasę nosi sekcja z innego komponentu, więc reguła nigdy się nie
+     dopasowuje i tekst zostaje czarny na ciemnym tle. */
+  :global(.on-onyx) .shead__lead,
+  :global(.on-graphite) .shead__lead { color: rgba(237, 234, 227, 0.7); }
+  :global(.on-onyx) .shead__idx,
+  :global(.on-graphite) .shead__idx { color: rgba(237, 234, 227, 0.45); }
+</style>

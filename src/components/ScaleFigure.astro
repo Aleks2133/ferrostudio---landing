@@ -1,0 +1,183 @@
+---
+/**
+ * Skala — sylwetka człowieka obok elementu.
+ *
+ * „1200 mm" niewiele mówi, dopóki nie zobaczysz tego obok kogoś. To jest ten
+ * sam problem, przez który klienci zamawiają logotypy o połowę za małe.
+ *
+ * Rysunek jest w całości proceduralny (SVG w kodzie), więc nie udaje zdjęcia
+ * i nie wymaga żadnego materiału — to element designu, nie dokumentacja.
+ *
+ * Sterowanie z zewnątrz: skrypt ustawia `data-mm` na elemencie, a wewnętrzny
+ * kod przelicza szerokość prostokąta. Bez JS pokazuje wartość domyślną.
+ */
+import { getLang } from '../i18n';
+
+interface Props {
+  /** szerokość elementu w mm */
+  mm?: number;
+  /** wysokość odniesienia sylwetki w mm */
+  personMm?: number;
+  class?: string;
+}
+const { mm = 1200, personMm = 1800, class: cls = '' } = Astro.props;
+
+const copy = {
+  pl: { lead: 'Podgląd poglądowy: element o szerokości', mid: 'obok sylwetki' },
+  en: { lead: 'Indicative preview: a piece', mid: 'wide next to a figure of' },
+}[getLang(Astro.url.pathname)];
+
+/** Wzrost odniesienia w centymetrach — ta sama liczba steruje skalą i podpisem,
+ *  żeby rysunek nigdy nie rozjechał się z tym, co jest napisane pod spodem. */
+const personCm = Math.round(personMm / 10);
+---
+
+<figure class:list={['sf', cls]} data-mm={mm} data-person={personMm}>
+  <div class="sf__stage">
+    <!--
+      viewBox ma dokładnie tyle jednostek wysokości, ile sylwetka ma
+      centymetrów — dzięki temu proporcje są realne, a nie „na oko": głowa
+      zajmuje ok. 1/7,5 wzrostu, krocze wypada mniej więcej w połowie,
+      a opuszczone dłonie sięgają połowy uda.
+
+      Sylwetka jest złożona z kilku nachodzących na siebie brył zamiast
+      jednej ścieżki. Poprzednia wersja była jedną ścieżką z błędnym
+      obrysem i rozpadała się na oderwany tors i nogi.
+    -->
+    <svg
+      class="sf__person"
+      viewBox={`0 0 50 ${personCm}`}
+      aria-hidden="true"
+      preserveAspectRatio="xMidYMax meet"
+    >
+      <g transform={`scale(1 ${personCm / 180})`}>
+        <ellipse cx="25" cy="12" rx="8" ry="12" />
+        <rect x="21.5" y="20" width="7" height="10" />
+        <rect x="8" y="27" width="34" height="38" rx="9" />
+        <rect x="11" y="55" width="28" height="38" rx="6" />
+        <rect x="4.5" y="30" width="8" height="82" rx="4" />
+        <rect x="37.5" y="30" width="8" height="82" rx="4" />
+        <rect x="12" y="84" width="11.5" height="96" rx="5" />
+        <rect x="26.5" y="84" width="11.5" height="96" rx="5" />
+      </g>
+    </svg>
+
+    <div class="sf__object" aria-hidden="true">
+      <span class="sf__dim mono">—</span>
+    </div>
+  </div>
+
+  <figcaption class="sf__cap">
+    {/* `{' '}` jest konieczne: JSX zjada odstęp między znacznikiem a tekstem
+        w nowej linii i wychodzi „1200 mmobok sylwetki". */}
+    {copy.lead} <span class="sf__val mono">{mm} mm</span>{' '}
+    {copy.mid} <span class="mono">{personCm} cm</span>.
+  </figcaption>
+</figure>
+
+<style>
+  .sf { margin: 0; }
+  .sf__stage {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    gap: clamp(1rem, 3vw, 2rem);
+    min-height: 180px;
+    padding: 1.25rem;
+    background: var(--color-panel);
+    border-bottom: 2px solid var(--color-onyx);
+  }
+  .sf__person {
+    width: auto;
+    height: 150px;
+    flex: none;
+    fill: var(--color-tin);
+    opacity: 0.55;
+  }
+  .sf__object {
+    position: relative;
+    height: var(--h, 40px);
+    width: var(--w, 40%);
+    max-width: 100%;
+    background: var(--color-onyx);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: width 0.25s var(--ease-out-quint), height 0.25s var(--ease-out-quint);
+  }
+  .sf__dim {
+    color: var(--color-bg);
+    font-size: 0.6875rem;
+    white-space: nowrap;
+  }
+  .sf__cap {
+    margin-top: 0.75rem;
+    font-size: 0.8125rem;
+    color: var(--color-tin);
+  }
+  .sf__val { color: var(--color-onyx); }
+
+  /* `:global()` jest tu konieczne, nie kosmetyczne. Astro domyślnie dokleja
+     atrybut zakresu do KAŻDEGO członu selektora, więc `.on-onyx .x` kompiluje
+     się do `.on-onyx[data-astro-cid-…] .x[data-astro-cid-…]` — a klasa tła
+     siedzi na sekcji z innego komponentu i nigdy tego atrybutu nie ma.
+     Reguła po cichu przestaje działać i tekst zostaje nieczytelny. */
+  :global(.on-onyx) .sf__stage,
+  :global(.on-graphite) .sf__stage {
+    background: rgba(237, 234, 227, 0.06);
+    border-bottom-color: var(--color-rust-lite);
+  }
+  :global(.on-onyx) .sf__object,
+  :global(.on-graphite) .sf__object { background: var(--color-rust-lite); }
+  :global(.on-onyx) .sf__val,
+  :global(.on-graphite) .sf__val { color: var(--color-bg); }
+  :global(.on-onyx) .sf__cap,
+  :global(.on-graphite) .sf__cap { color: rgba(237, 234, 227, 0.7); }
+  /* Przezroczystość MUSI siedzieć na elemencie, nie w kolorze wypełnienia.
+     Sylwetka jest złożona z nachodzących na siebie brył — półprzezroczysty
+     `fill` sumuje się na zakładkach i na figurze pojawiają się jaśniejsze szwy.
+     `opacity` na całym SVG spłaszcza rysunek najpierw, a wygasza dopiero potem. */
+  :global(.on-onyx) .sf__person,
+  :global(.on-graphite) .sf__person { fill: var(--color-bg); opacity: 0.42; }
+  :global(.on-onyx) .sf__dim,
+  :global(.on-graphite) .sf__dim { color: var(--color-onyx); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sf__object { transition: none; }
+  }
+</style>
+
+<script>
+  // Skala liczona względem sylwetki: jej wysokość w pikselach odpowiada
+  // `data-person` milimetrom, więc szerokość elementu wychodzi wprost z proporcji.
+  document.querySelectorAll<HTMLElement>('.sf').forEach((fig) => {
+    const person = fig.querySelector<SVGElement>('.sf__person');
+    const object = fig.querySelector<HTMLElement>('.sf__object');
+    const dim = fig.querySelector<HTMLElement>('.sf__dim');
+    const val = fig.querySelector<HTMLElement>('.sf__val');
+    if (!person || !object) return;
+
+    const personMm = Number(fig.dataset.person ?? 1750);
+
+    const render = (mm: number) => {
+      const pxPerMm = person.getBoundingClientRect().height / personMm;
+      const stage = fig.querySelector<HTMLElement>('.sf__stage');
+      const available = (stage?.clientWidth ?? 300) - person.getBoundingClientRect().width - 60;
+
+      const w = Math.min(mm * pxPerMm, Math.max(40, available));
+      // Wysokość poglądowa: typowy logotyp jest ok. 4× szerszy niż wyższy.
+      object.style.setProperty('--w', `${Math.round(w)}px`);
+      object.style.setProperty('--h', `${Math.round(Math.max(24, w / 4))}px`);
+      if (dim) dim.textContent = `${mm} mm`;
+      if (val) val.textContent = `${mm} mm`;
+    };
+
+    const update = () => render(Number(fig.dataset.mm ?? 1200));
+
+    update();
+    window.addEventListener('resize', update, { passive: true });
+
+    // Zmiana `data-mm` z zewnątrz przerysowuje podgląd.
+    new MutationObserver(update).observe(fig, { attributes: true, attributeFilter: ['data-mm'] });
+  });
+</script>

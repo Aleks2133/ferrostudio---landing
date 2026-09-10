@@ -1,0 +1,195 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+import SectionHeader from '../components/SectionHeader.astro';
+import ContactCta from '../components/sections/ContactCta.astro';
+import { SITE } from '../config';
+
+import workMain from '../assets/photos/realizacja-society-landscape.jpg';
+import workProces from '../assets/photos/realizacja-society-landscape-proces.jpg';
+import workDetal from '../assets/photos/realizacja-society-landscape-detal.jpg';
+
+const offer = [
+  {
+    title: 'Logotypy i napisy firmowe',
+    body: 'Twoje logo albo nazwa wycięte w metalu — do recepcji, na elewację, do sali spotkań. Czyste krawędzie, montaż na dystansach lub płasko na ścianie.',
+  },
+  {
+    title: 'Dekoracje ścienne',
+    body: 'Panele ażurowe, formy geometryczne, motywy roślinne i grafika autorska. Pojedynczy element albo cała kompozycja na ścianę, do wnętrz prywatnych i komercyjnych.',
+  },
+  {
+    title: 'Projekty indywidualne',
+    body: 'Masz gotowy plik wektorowy albo tylko szkic? Przygotujemy projekt do cięcia, dobierzemy materiał i wykończenie, wytniemy i wykończymy.',
+  },
+];
+
+const metals = [
+  { name: 'Stal czarna', note: 'Najbardziej uniwersalna. Wymaga zabezpieczenia powierzchni.' },
+  { name: 'Stal nierdzewna', note: 'Do wnętrz i na zewnątrz. Nie wymaga konserwacji.' },
+  { name: 'Stal corten', note: 'Patynuje się w kontrolowany sposób. Żyje razem z budynkiem.' },
+  { name: 'Aluminium', note: 'Lekkie — tam, gdzie ściana nie utrzyma stali.' },
+  { name: 'Mosiądz', note: 'Najwyższa półka. Ciepły ton, starzeje się szlachetnie.' },
+];
+
+const work = [
+  { src: workMain, alt: 'Odręczny znak firmowy Society Landscape wycięty w metalu, tuż po cięciu' },
+  { src: workProces, alt: 'Panele znaku Society Landscape w trakcie malowania proszkowego' },
+  { src: workDetal, alt: 'Zbliżenie na krawędź cięcia i wykończenie znaku Society Landscape' },
+];
+
+const services = ['Logotypy z metalu', 'Dekoracje ścienne z metalu', 'Cięcie metalu na zamówienie'].map(
+  (name) => ({
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    name,
+    provider: { '@id': `${SITE.url}/#business` },
+    areaServed: { '@type': 'Country', name: SITE.areaServed },
+  })
+);
+---
+
+<BaseLayout
+  title="Ferro Studio — logotypy i dekoracje z metalu ciętego na wymiar"
+  description="Projektujemy i wycinamy w metalu: logotypy firmowe, napisy i dekoracje ścienne. Projekt indywidualny, precyzyjne wykonanie, wysyłka w całej Polsce."
+  path="/"
+  jsonLd={services}
+>
+  <Hero />
+
+  <section id="oferta" class="offer section-y">
+    <div class="container-x">
+      <SectionHeader index="01 / oferta" title="Co robimy" />
+      <ul class="offer__list">
+        {
+          offer.map((it, i) => (
+            <li class="offer__item" data-reveal style={`--i:${i}`}>
+              <h3>{it.title}</h3>
+              <p>{it.body}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section id="materialy" class="mats section-y">
+    <div class="container-x">
+      <SectionHeader index="02 / materiał" title="W czym wycinamy" />
+      <dl class="mats__list">
+        {
+          metals.map((m, i) => (
+            <div class="mats__row" data-reveal style={`--i:${i}`}>
+              <dt>{m.name}</dt>
+              <dd>{m.note}</dd>
+            </div>
+          ))
+        }
+      </dl>
+      <p class="mats__note">
+        Grubość, wykończenie i sposób montażu dobieramy do konkretnego projektu na etapie wyceny.
+      </p>
+    </div>
+  </section>
+
+  <section id="realizacja" class="work section-y">
+    <div class="container-x">
+      <SectionHeader index="03 / realizacja" title="Society Landscape" />
+      <p class="work__lead" data-reveal>
+        Odręczny, kaligraficzny znak firmowy wycięty w metalu dla
+        <a href="https://societylandscape.pl" rel="noopener">Society Landscape</a> — od cięcia
+        po malowanie proszkowe.
+      </p>
+      <div class="work__grid">
+        {
+          work.map((w, i) => (
+            <figure class="work__fig" data-reveal={i % 2 === 1 ? 'right' : true}>
+              <Image
+                src={w.src}
+                alt={w.alt}
+                widths={[480, 800, 1200]}
+                sizes="(min-width:900px) 33vw, 100vw"
+                loading="lazy"
+              />
+            </figure>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <ContactCta />
+</BaseLayout>
+
+<style>
+  .offer__list {
+    list-style: none;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: clamp(1.5rem, 3vw, 2.25rem);
+  }
+  .offer__item h3 {
+    font-size: clamp(1.2rem, 2.2vw, 1.5rem);
+    margin-bottom: 0.5rem;
+  }
+  .offer__item p {
+    color: color-mix(in srgb, var(--color-onyx) 76%, transparent);
+    max-width: 46ch;
+  }
+  @media (min-width: 860px) {
+    .offer__list { grid-template-columns: repeat(3, 1fr); gap: 2rem; }
+  }
+
+  .mats { background: var(--color-panel); }
+  .mats__list {
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid var(--color-line);
+  }
+  .mats__row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.25rem 1.5rem;
+    padding: 1.1rem 0;
+    border-bottom: 1px solid var(--color-line);
+  }
+  .mats__row dt { font-weight: 600; font-size: 1.05rem; }
+  .mats__row dd {
+    margin: 0;
+    color: color-mix(in srgb, var(--color-onyx) 74%, transparent);
+  }
+  .mats__note {
+    margin-top: 1.25rem;
+    font-size: 0.9375rem;
+    color: var(--color-tin);
+    max-width: 52ch;
+  }
+  @media (min-width: 640px) {
+    .mats__row { grid-template-columns: 14rem 1fr; align-items: baseline; }
+  }
+
+  .work__lead {
+    max-width: 54ch;
+    margin-bottom: clamp(1.5rem, 3vw, 2rem);
+    color: color-mix(in srgb, var(--color-onyx) 78%, transparent);
+  }
+  .work__lead a { color: var(--color-rust); text-decoration: underline; text-underline-offset: 2px; }
+  .work__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: clamp(1rem, 3vw, 1.5rem);
+  }
+  .work__fig { margin: 0; }
+  .work__fig img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    aspect-ratio: 4 / 5;
+  }
+  @media (min-width: 760px) {
+    .work__grid { grid-template-columns: repeat(3, 1fr); }
+    .work__fig img { aspect-ratio: 1 / 1; }
+  }
+</style>

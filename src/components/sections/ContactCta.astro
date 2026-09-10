@@ -1,0 +1,86 @@
+---
+import ContactForm from '../ContactForm.astro';
+import { SITE } from '../../config';
+import { getLang } from '../../i18n';
+
+const copy = {
+  pl: {
+    title: 'Masz projekt?<br />Wytnijmy go.',
+    lead: 'Prześlij plik albo opisz pomysł — odezwiemy się z wyceną w 1–2 dni robocze.',
+  },
+  en: {
+    title: 'Got a project?<br />Let us cut it.',
+    lead: 'Send the file or describe the idea — we come back with a quote in 1–2 working days.',
+  },
+}[getLang(Astro.url.pathname)];
+
+interface Props {
+  headingTag?: 'h1' | 'h2';
+}
+const { headingTag = 'h2' } = Astro.props;
+const Heading = headingTag;
+---
+
+<section id="kontakt" class="cta section-y on-onyx">
+  <div class="container-x">
+    <div class="cta__grid">
+      <div class="cta__intro" data-reveal>
+        <Heading set:html={copy.title} />
+        <p class="cta__lead">{copy.lead}</p>
+
+        <div class="cta__direct">
+          <a href={SITE.phoneHref} class="cta__phone">{SITE.phone}</a>
+          <a href={`mailto:${SITE.email}`} class="cta__mail">{SITE.email}</a>
+        </div>
+      </div>
+
+      <div class="cta__form" data-reveal style="--i:1">
+        <ContactForm />
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cta__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: clamp(2rem, 4vw, 3rem);
+    align-items: start;
+  }
+  .cta__intro :is(h1, h2) {
+    font-size: clamp(2rem, 4.5vw, 3rem);
+    margin: 0.5rem 0 0.9rem;
+    color: var(--color-bg);
+  }
+  .cta__lead {
+    color: rgba(237, 234, 227, 0.72);
+    font-size: 1.05rem;
+    max-width: 38ch;
+  }
+  .cta__direct { margin-top: 1.75rem; }
+  .cta__phone {
+    display: block;
+    font-family: var(--font-display);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    line-height: 1.1;
+    color: var(--color-bg);
+    text-decoration: none;
+  }
+  .cta__phone:hover { color: var(--color-rust-lite); }
+  .cta__mail {
+    display: block;
+    margin-top: 0.6rem;
+    color: rgba(237, 234, 227, 0.7);
+    text-decoration: none;
+    font-size: 0.95rem;
+  }
+  .cta__mail:hover { color: var(--color-rust-lite); }
+
+  @media (min-width: 880px) {
+    .cta__grid { grid-template-columns: 1fr 1fr; gap: clamp(2.5rem, 5vw, 4rem); }
+  }
+</style>

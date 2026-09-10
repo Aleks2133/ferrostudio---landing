@@ -1,0 +1,1 @@
+import{q as t}from"./Color-CtF1uI9B.js";import{t as h}from"./Texture-CLEUlQxP.js";var g=class extends h{constructor(e=null,s=1,a=1,r,i,l,u,n,p=t,m=t,o,f){super(null,l,u,n,p,m,r,i,o,f),this.isDataTexture=!0,this.image={data:e,width:s,height:a},this.generateMipmaps=!1,this.flipY=!1,this.unpackAlignment=1}};export{g as t};

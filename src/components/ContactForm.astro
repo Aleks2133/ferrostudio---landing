@@ -1,0 +1,399 @@
+---
+import { getLang } from '../i18n';
+
+/**
+ * Formularz kontaktowy w dwóch językach. Komunikaty stanu (wysyłanie, sukces,
+ * błąd) idą do skryptu przez `data-*` na `<form>`, żeby skrypt nie musiał
+ * wiedzieć, na jakiej wersji językowej stoi.
+ */
+const copy = {
+  pl: {
+    subject: 'Nowe zapytanie ze strony ferrostudio.pl',
+    from: 'Ferro Studio — formularz',
+    name: 'Imię i nazwisko lub firma',
+    email: 'E-mail',
+    phone: 'Telefon',
+    optional: '(opcjonalnie)',
+    message: 'Opisz projekt',
+    messagePh: 'Co chcesz wyciąć, orientacyjny rozmiar, materiał, termin…',
+    files: 'Pliki',
+    filesHint: '(opcjonalnie — projekt, szkic, zdjęcie)',
+    consent: 'Wyrażam zgodę na przetwarzanie moich danych w celu odpowiedzi na zapytanie, zgodnie z',
+    policy: 'Polityką prywatności',
+    submit: 'Wyślij zapytanie',
+    sending: 'Wysyłanie…',
+    ok: 'Dziękujemy — odezwiemy się w 1–2 dni robocze.',
+    fail: 'Nie udało się wysłać. Napisz na kontakt@ferrostudio.pl lub zadzwoń.',
+  },
+  en: {
+    subject: 'New enquiry (EN) from ferrostudio.pl',
+    from: 'Ferro Studio — contact form',
+    name: 'Name or company',
+    email: 'Email',
+    phone: 'Phone',
+    optional: '(optional)',
+    message: 'Describe the project',
+    messagePh: 'What you want cut, approximate size, material, deadline…',
+    files: 'Files',
+    filesHint: '(optional — design, sketch, photo)',
+    consent: 'I consent to my data being processed in order to answer this enquiry, in line with the',
+    policy: 'Privacy Policy (in Polish)',
+    submit: 'Send enquiry',
+    sending: 'Sending…',
+    ok: 'Thank you — we will get back to you within 1–2 working days.',
+    fail: 'Could not send. Write to kontakt@ferrostudio.pl or give us a call.',
+  },
+}[getLang(Astro.url.pathname)];
+---
+
+<form
+  class="cf"
+  action="/send-form.php"
+  method="POST"
+  enctype="multipart/form-data"
+  data-sending={copy.sending}
+  data-ok={copy.ok}
+  data-fail={copy.fail}
+>
+  <input type="hidden" name="subject" value={copy.subject} />
+  <input type="hidden" name="from_name" value={copy.from} />
+  {/* Honeypot: pole niewidoczne dla człowieka, boty je wypełniają.
+      send-form.php po cichu udaje sukces, nic nie wysyłając. */}
+  <input type="text" name="website" class="cf__hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
+
+  <div class="cf__row">
+    <label class="cf__field">
+      <span>{copy.name}</span>
+      <input type="text" name="name" required autocomplete="name" />
+    </label>
+    <label class="cf__field">
+      <span>{copy.email}</span>
+      <input type="email" name="email" required autocomplete="email" />
+    </label>
+  </div>
+
+  <label class="cf__field">
+    <span>{copy.phone} <em>{copy.optional}</em></span>
+    <input type="tel" name="phone" autocomplete="tel" />
+  </label>
+
+  <label class="cf__field">
+    <span>{copy.message}</span>
+    <textarea name="message" rows="4" required placeholder={copy.messagePh}></textarea>
+  </label>
+
+  <label class="cf__field">
+    <span>{copy.files} <em>{copy.filesHint}</em></span>
+    <input type="file" name="attachment[]" multiple accept="image/*,.pdf,.ai,.svg,.dxf,.eps" />
+    <div class="cf__files" hidden></div>
+  </label>
+
+  <label class="cf__consent">
+    <input type="checkbox" name="consent" required />
+    <span>
+      {copy.consent} <a href="/polityka-prywatnosci" lang="pl">{copy.policy}</a>.
+    </span>
+  </label>
+
+  <button type="submit" class="btn btn-primary cf__submit">
+    <span class="cf__submit-label">{copy.submit}</span>
+  </button>
+
+  <p class="cf__status" role="status" aria-live="polite" hidden></p>
+</form>
+
+<style>
+  .cf { display: flex; flex-direction: column; gap: 1.5rem; }
+  .cf__hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+
+  .cf__row { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
+  @media (min-width: 560px) { .cf__row { grid-template-columns: 1fr 1fr; } }
+
+  .cf__field { display: flex; flex-direction: column; gap: 0.5rem; }
+  .cf__field > span {
+    font-size: 0.8125rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: rgba(237, 234, 227, 0.7);
+  }
+  .cf__field > span em { font-style: normal; color: rgba(237, 234, 227, 0.4); text-transform: none; letter-spacing: 0; }
+
+  .cf input,
+  .cf textarea {
+    width: 100%;
+    background: transparent;
+    border: 0;
+    border-bottom: 1px solid rgba(237, 234, 227, 0.28);
+    color: var(--color-bg);
+    font: inherit;
+    padding: 0.6rem 0;
+    transition: border-color 0.2s;
+  }
+  .cf textarea { resize: vertical; min-height: 5.5rem; }
+  .cf input:focus,
+  .cf textarea:focus { outline: none; border-bottom-color: var(--color-rust-lite); }
+  .cf input::placeholder,
+  .cf textarea::placeholder { color: rgba(237, 234, 227, 0.35); }
+
+  .cf input[type='file'] {
+    font-size: 0.875rem;
+    color: rgba(237, 234, 227, 0.6);
+  }
+  .cf input[type='file']::file-selector-button {
+    font: inherit;
+    font-weight: 600;
+    font-size: 0.8125rem;
+    padding: 0.5rem 1rem;
+    margin-right: 0.85rem;
+    background: transparent;
+    border: 1px solid rgba(237, 234, 227, 0.4);
+    color: var(--color-bg);
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .cf input[type='file']::file-selector-button:hover {
+    border-color: var(--color-rust-lite);
+    color: var(--color-rust-lite);
+  }
+
+  /* :global() because these elements are created client-side (document.createElement),
+     so they never get Astro's scoping attribute — a scoped selector would never match them. */
+  :global(.cf__files) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+  }
+  :global(.cf__file) {
+    position: relative;
+    width: 72px;
+    flex: 0 0 auto;
+  }
+  :global(.cf__file-thumb) {
+    width: 72px;
+    height: 72px;
+    border: 1px solid rgba(237, 234, 227, 0.28);
+    background: rgba(237, 234, 227, 0.06);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  :global(.cf__file-thumb img) { width: 100%; height: 100%; object-fit: cover; display: block; }
+  :global(.cf__file-ext) {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: rgba(237, 234, 227, 0.55);
+  }
+  :global(.cf__file-name) {
+    display: block;
+    margin-top: 0.35rem;
+    font-size: 0.6875rem;
+    color: rgba(237, 234, 227, 0.55);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  :global(.cf__file-remove) {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-onyx);
+    border: 1px solid rgba(237, 234, 227, 0.4);
+    color: var(--color-bg);
+    font-size: 0.875rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  :global(.cf__file-remove:hover) { border-color: var(--color-rust-lite); color: var(--color-rust-lite); }
+
+  .cf__consent {
+    display: flex;
+    gap: 0.7rem;
+    align-items: flex-start;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    color: rgba(237, 234, 227, 0.6);
+  }
+  .cf__consent input { width: 1rem; height: 1rem; margin-top: 0.2rem; accent-color: var(--color-rust-lite); flex: 0 0 auto; }
+  .cf__consent a { color: var(--color-rust-lite); text-decoration: underline; text-underline-offset: 2px; }
+
+  /* Wysyłanie = przejazd wiązki: ten sam motyw co [data-reveal] w global.css —
+     jasna linia przecinająca powierzchnię, tylko w pętli zamiast raz. */
+  .cf__submit {
+    align-self: flex-start;
+    margin-top: 0.5rem;
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .cf__submit:disabled { cursor: default; }
+  .cf__submit-label { position: relative; z-index: 1; transition: opacity 0.2s; }
+  .cf__submit.is-sending .cf__submit-label { opacity: 0.75; }
+
+  .cf__submit::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -35%;
+    width: 35%;
+    background: linear-gradient(90deg, transparent, rgba(237, 234, 227, 0.55), transparent);
+    opacity: 0;
+    pointer-events: none;
+  }
+  .cf__submit.is-sending::after {
+    opacity: 1;
+    animation: cf-sweep 1.15s var(--ease-out-quint) infinite;
+  }
+  @keyframes cf-sweep {
+    from { left: -35%; }
+    to { left: 100%; }
+  }
+
+  .cf__status {
+    font-size: 0.9rem;
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity 0.35s ease, transform 0.35s ease;
+  }
+  .cf__status.is-in { opacity: 1; transform: none; }
+  .cf__status[data-state='ok'] { color: var(--color-rust-lite); }
+  .cf__status[data-state='error'] { color: #ff8f6b; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cf__submit::after { animation: none; opacity: 0.4; left: 0; width: 100%; }
+    .cf__status { transition: opacity 0.15s; transform: none; }
+  }
+</style>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('.cf');
+  const status = form?.querySelector<HTMLParagraphElement>('.cf__status');
+  const submit = form?.querySelector<HTMLButtonElement>('.cf__submit');
+  const fileInput = form?.querySelector<HTMLInputElement>('input[type="file"]');
+  const filesBox = form?.querySelector<HTMLDivElement>('.cf__files');
+
+  let resetFiles = () => {};
+
+  if (form && fileInput && filesBox) {
+    let files: File[] = [];
+    const objectUrls: string[] = [];
+
+    const syncInput = () => {
+      const dt = new DataTransfer();
+      files.forEach((f) => dt.items.add(f));
+      fileInput.files = dt.files;
+    };
+
+    const clearPreviews = () => {
+      objectUrls.forEach((url) => URL.revokeObjectURL(url));
+      objectUrls.length = 0;
+      filesBox.replaceChildren();
+    };
+
+    const render = () => {
+      clearPreviews();
+      filesBox.hidden = files.length === 0;
+      files.forEach((file, i) => {
+        const item = document.createElement('div');
+        item.className = 'cf__file';
+
+        const thumb = document.createElement('div');
+        thumb.className = 'cf__file-thumb';
+        if (file.type.startsWith('image/')) {
+          const url = URL.createObjectURL(file);
+          objectUrls.push(url);
+          const img = document.createElement('img');
+          img.src = url;
+          img.alt = '';
+          thumb.appendChild(img);
+        } else {
+          const ext = document.createElement('span');
+          ext.className = 'cf__file-ext';
+          ext.textContent = file.name.split('.').pop() || '?';
+          thumb.appendChild(ext);
+        }
+
+        const remove = document.createElement('button');
+        remove.type = 'button';
+        remove.className = 'cf__file-remove';
+        remove.setAttribute('aria-label', `Usuń plik ${file.name}`);
+        remove.textContent = '×';
+        remove.addEventListener('click', () => {
+          files.splice(i, 1);
+          syncInput();
+          render();
+        });
+
+        const name = document.createElement('span');
+        name.className = 'cf__file-name';
+        name.textContent = file.name;
+
+        item.append(thumb, remove, name);
+        filesBox.appendChild(item);
+      });
+    };
+
+    fileInput.addEventListener('change', () => {
+      files = [...files, ...Array.from(fileInput.files ?? [])];
+      syncInput();
+      render();
+    });
+
+    resetFiles = () => {
+      files = [];
+      syncInput();
+      render();
+    };
+  }
+
+  const submitLabel = submit?.querySelector<HTMLSpanElement>('.cf__submit-label');
+
+  const showStatus = (text: string, state: 'ok' | 'error') => {
+    if (!status) return;
+    status.classList.remove('is-in');
+    status.hidden = false;
+    status.textContent = text;
+    status.dataset.state = state;
+    requestAnimationFrame(() => requestAnimationFrame(() => status.classList.add('is-in')));
+  };
+
+  if (form && status && submit && submitLabel) {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      submit.disabled = true;
+      submit.classList.add('is-sending');
+      status.classList.remove('is-in');
+      status.hidden = true;
+      try {
+        const res = await fetch(form.action, {
+          method: 'POST',
+          body: new FormData(form),
+        });
+        const json = await res.json().catch(() => ({}));
+        if (res.ok && json.success) {
+          form.reset();
+          resetFiles();
+          showStatus(form.dataset.ok ?? '', 'ok');
+        } else {
+          throw new Error(json.error || 'send failed');
+        }
+      } catch {
+        showStatus(form.dataset.fail ?? '', 'error');
+      } finally {
+        submit.disabled = false;
+        submit.classList.remove('is-sending');
+      }
+    });
+  }
+</script>

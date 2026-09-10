@@ -1,0 +1,57 @@
+---
+import { SITE } from '../config';
+import { getLang, useTranslations } from '../i18n';
+
+const t = useTranslations(getLang(Astro.url.pathname));
+---
+
+<a href={SITE.phoneHref} class="stickycall" aria-label={`${t('call.aria')}: ${SITE.phone}`} data-stickycall hidden>
+  <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square">
+    <path d="M4 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L14 13l5 2v4a2 2 0 0 1-2 2C9.5 21 3 14.5 3 6a2 2 0 0 1 1-2Z" />
+  </svg>
+</a>
+
+<style>
+  .stickycall {
+    position: fixed;
+    right: 1rem;
+    bottom: 1rem;
+    z-index: 40;
+    width: 52px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* Grafit, nie rdza — na ekranie telefonu rdzawe jest CTA wyceny.
+       Dwa rdzawe akcenty naraz łamią dyscyplinę koloru z 6.2. */
+    background: var(--color-graphite);
+    color: var(--color-bg);
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.4);
+    transform: translateY(140%);
+    transition: transform 0.4s var(--ease-out-quint), background-color 0.2s;
+  }
+  .stickycall.is-in { transform: none; }
+  .stickycall:hover { background: var(--color-onyx); }
+
+  @media (min-width: 640px) {
+    .stickycall { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .stickycall { transition: none; }
+  }
+</style>
+
+<script>
+  const KEY = 'ferro-cookie-ack';
+  const el = document.querySelector<HTMLAnchorElement>('[data-stickycall]');
+  if (el) {
+    const reveal = () => {
+      el.hidden = false;
+      requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('is-in')));
+    };
+    let acked = false;
+    try { acked = localStorage.getItem(KEY) === '1'; } catch (e) {}
+    if (acked) reveal();
+    else window.addEventListener('ferro-cookie-ack', reveal, { once: true });
+  }
+</script>

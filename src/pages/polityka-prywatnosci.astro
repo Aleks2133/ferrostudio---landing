@@ -1,0 +1,109 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import { SITE } from '../config';
+---
+
+<PageLayout
+  title="Polityka prywatności — Ferro Studio"
+  description="Zasady przetwarzania danych osobowych w serwisie ferrostudio.pl."
+  index="informacje prawne"
+  heading="Polityka prywatności"
+  updated="30 sierpnia 2026"
+>
+  <h2>1. Administrator danych</h2>
+  <p>
+    Administratorem danych osobowych jest <strong>{SITE.legalName}</strong>,
+    prowadząca działalność pod marką „Ferro Studio", {SITE.address.street},
+    {SITE.address.postal} {SITE.address.city}, NIP {SITE.nip}, REGON {SITE.regon}
+    (dalej: „Administrator").
+  </p>
+  <p>
+    Kontakt w sprawach ochrony danych: <a href={`mailto:${SITE.email}`}>{SITE.email}</a>,
+    tel. <a href={SITE.phoneHref}>{SITE.phone}</a>.
+  </p>
+
+  <h2>2. Zakres i cele przetwarzania</h2>
+  <ul>
+    <li>
+      <strong>Obsługa zapytań i wycen</strong> (formularz kontaktowy, e-mail, telefon) —
+      dane: imię i nazwisko lub nazwa firmy, adres e-mail, numer telefonu, treść wiadomości
+      oraz przesłane pliki projektowe. Podstawa: art. 6 ust. 1 lit. b RODO (czynności
+      zmierzające do zawarcia umowy) oraz lit. f RODO (prawnie uzasadniony interes —
+      komunikacja z zainteresowanym).
+    </li>
+    <li>
+      <strong>Realizacja zamówienia i wysyłka</strong> — dane niezbędne do wykonania umowy
+      i dostawy (dane adresowe, dane do faktury). Podstawa: art. 6 ust. 1 lit. b oraz
+      lit. c RODO (obowiązki podatkowo-księgowe).
+    </li>
+    <li>
+      <strong>Rozpatrywanie reklamacji</strong> — podstawa: art. 6 ust. 1 lit. b i lit. c RODO.
+    </li>
+    <li>
+      <strong>Dochodzenie lub obrona roszczeń</strong> — podstawa: art. 6 ust. 1 lit. f RODO.
+    </li>
+  </ul>
+
+  <h2>3. Odbiorcy danych</h2>
+  <p>Dane mogą być powierzane następującym kategoriom podmiotów:</p>
+  <ul>
+    <li>
+      dostawca hostingu serwisu (dhosting.pl / DHOSTING Sp. z o.o.) — formularz kontaktowy
+      wysyła wiadomość bezpośrednio z serwera, bez pośrednictwa żadnego zewnętrznego
+      operatora formularzy;
+    </li>
+    <li>dostawca poczty elektronicznej;</li>
+    <li>firmy kurierskie i pocztowe — w zakresie niezbędnym do dostawy;</li>
+    <li>biuro rachunkowe oraz podmioty świadczące obsługę prawną;</li>
+    <li>organy publiczne — gdy wynika to z przepisów prawa.</li>
+  </ul>
+
+  <h2>4. Przekazywanie poza EOG</h2>
+  <p>
+    Co do zasady dane nie są przekazywane poza Europejski Obszar Gospodarczy. Jeżeli
+    dostawca narzędzia (np. operator formularza) przetwarza dane poza EOG, odbywa się to
+    w oparciu o standardowe klauzule umowne zatwierdzone przez Komisję Europejską lub inny
+    mechanizm zgodny z rozdziałem V RODO.
+  </p>
+
+  <h2>5. Okres przechowywania</h2>
+  <ul>
+    <li>zapytania niezakończone zawarciem umowy — do 12 miesięcy od ostatniego kontaktu;</li>
+    <li>dane związane z umową — przez czas jej realizacji, a następnie do upływu okresu
+      przedawnienia roszczeń;</li>
+    <li>dokumentacja księgowa — 5 lat licząc od końca roku kalendarzowego, w którym powstał
+      obowiązek podatkowy.</li>
+  </ul>
+
+  <h2>6. Prawa osoby, której dane dotyczą</h2>
+  <p>Przysługuje Ci prawo do:</p>
+  <ul>
+    <li>dostępu do danych oraz otrzymania ich kopii;</li>
+    <li>sprostowania danych;</li>
+    <li>usunięcia danych;</li>
+    <li>ograniczenia przetwarzania;</li>
+    <li>przenoszenia danych;</li>
+    <li>sprzeciwu wobec przetwarzania opartego na art. 6 ust. 1 lit. f RODO;</li>
+    <li>wniesienia skargi do Prezesa Urzędu Ochrony Danych Osobowych (ul. Stawki 2,
+      00-193 Warszawa).</li>
+  </ul>
+
+  <h2>7. Dobrowolność podania danych</h2>
+  <p>
+    Podanie danych jest dobrowolne, ale niezbędne do udzielenia odpowiedzi na zapytanie,
+    przygotowania wyceny oraz realizacji zamówienia. Brak podania danych uniemożliwia
+    realizację tych działań.
+  </p>
+
+  <h2>8. Pliki cookies</h2>
+  <p>
+    Zasady wykorzystania plików cookies i podobnych technologii opisano w odrębnej
+    <a href="/cookies">Polityce cookies</a>.
+  </p>
+
+  <h2>9. Zmiany polityki</h2>
+  <p>
+    Administrator może aktualizować niniejszą politykę. Aktualna wersja jest zawsze
+    dostępna pod tym adresem, wraz z datą ostatniej aktualizacji.
+  </p>
+</PageLayout>

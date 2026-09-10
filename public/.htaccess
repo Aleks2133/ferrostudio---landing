@@ -1,0 +1,175 @@
+# ---------------------------------------------------------------------------
+#  Ferro Studio — konfiguracja Apache pod dhosting.pl
+#
+#  Plik leży w `public/`, więc Astro kopiuje go do `dist/` przy każdym buildzie.
+#  Na hosting wgrywamy ZAWARTOŚĆ `dist/` — razem z tym plikiem.
+#
+#  Kolejność bloków ma znaczenie: najpierw przekierowania (żeby kanoniczny adres
+#  ustalił się raz), potem mapowanie adresów na pliki, potem nagłówki.
+# ---------------------------------------------------------------------------
+
+AddDefaultCharset utf-8
+Options -Indexes -MultiViews
+
+# ---------------------------------------------------------------------------
+#  TYPY MIME
+#
+#  Bez tego moduły ES potrafią przyjechać jako `application/octet-stream`,
+#  a przeglądarka odmawia ich wykonania — scena 3D po prostu się nie podnosi
+#  i nie widać żadnego błędu sieciowego. To jest najczęstsza przyczyna
+#  „na localhoście działało".
+# ---------------------------------------------------------------------------
+<IfModule mod_mime.c>
+  AddType text/javascript                .js .mjs
+  AddType application/json               .json
+  AddType application/manifest+json      .webmanifest
+  AddType font/woff2                     .woff2
+  AddType image/svg+xml                  .svg
+  AddType image/webp                     .webp
+  AddType image/avif                     .avif
+  AddType model/gltf-binary              .glb
+  AddType model/vnd.usdz+zip             .usdz
+  AddType text/markdown                  .md
+  AddType application/xml                .xml
+</IfModule>
+
+# ---------------------------------------------------------------------------
+#  ADRESY KANONICZNE
+#
+#  Astro ma `trailingSlash: 'never'`, więc kanoniczne jest `/wycena`, nie
+#  `/wycena/`. Apache domyślnie robi odwrotnie: `DirectorySlash` przekierowuje
+#  na wersję ze slashem, co daje pętlę z naszym przekierowaniem poniżej.
+#  Dlatego `DirectorySlash Off` MUSI tu zostać.
+# ---------------------------------------------------------------------------
+DirectorySlash Off
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # 1. HTTPS. Na dhostingu terminacja SSL bywa przed Apache, więc sprawdzamy
+  #    też nagłówek proxy — samo %{HTTPS} potrafi tam zawsze zwracać "off"
+  #    i wpaść w pętlę przekierowań.
+  RewriteCond %{HTTPS} !=on
+  RewriteCond %{HTTP:X-Forwarded-Proto} !=https
+  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+
+  # 2. www → bez www (jedna domena kanoniczna, zgodna z `site` w astro.config)
+  RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+  RewriteRule ^ https://%1%{REQUEST_URI} [R=301,L]
+
+  # 3. Ucięcie końcowego slasha — poza katalogiem głównym.
+  RewriteCond %{REQUEST_URI} !^/$
+  RewriteRule ^(.*)/$ /$1 [R=301,L]
+
+  # 4. Adres bez rozszerzenia → `index.html` z odpowiedniego katalogu.
+  #    Wewnętrznie (bez [R]), żeby w pasku adresu został czysty URL.
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI}/index.html -f
+  RewriteRule ^(.*)$ /$1/index.html [L]
+</IfModule>
+
+ErrorDocument 404 /404.html
+
+# ---------------------------------------------------------------------------
+#  KOMPRESJA
+#
+#  Brotli, jeśli hosting go ma; deflate jako pewny fallback. Największe pliki
+#  na tej stronie to moduły three.js — różnica gzip/brotli to na nich ~50 kB.
+# ---------------------------------------------------------------------------
+<IfModule mod_brotli.c>
+  AddOutputFilterByType BROTLI_COMPRESS text/html text/plain text/css text/xml text/markdown
+  AddOutputFilterByType BROTLI_COMPRESS text/javascript application/javascript
+  AddOutputFilterByType BROTLI_COMPRESS application/json application/manifest+json
+  AddOutputFilterByType BROTLI_COMPRESS application/xml application/rss+xml image/svg+xml
+</IfModule>
+
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/css text/xml text/markdown
+  AddOutputFilterByType DEFLATE text/javascript application/javascript
+  AddOutputFilterByType DEFLATE application/json application/manifest+json
+  AddOutputFilterByType DEFLATE application/xml application/rss+xml image/svg+xml
+</IfModule>
+
+# Fonty woff2 i obrazy webp/avif są już skompresowane — powtórna kompresja
+# tylko zżera CPU i nic nie daje.
+<IfModule mod_setenvif.c>
+  SetEnvIfNoCase Request_URI \.(?:woff2?|webp|avif|png|jpe?g|glb|usdz|ico)$ no-gzip dont-vary
+</IfModule>
+
+# ---------------------------------------------------------------------------
+#  CACHE
+#
+#  Reguła: `immutable` wolno dawać WYŁĄCZNIE plikom z hashem w nazwie.
+#  Reszta dostaje krótsze okno, bo po wgraniu nowej wersji nazwa się nie zmieni
+#  i przeglądarka trzymałaby stary plik.
+# ---------------------------------------------------------------------------
+<IfModule mod_headers.c>
+  # Nazwy z hashem — Astro (`/_astro/`) i chunki three (`/vendor/three/chunks/`).
+  <IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^(_astro|vendor/three/chunks)/ - [E=IMMUTABLE:1]
+  </IfModule>
+  Header set Cache-Control "public, max-age=31536000, immutable" env=IMMUTABLE
+
+  # Fonty: nazwy bez hasha, ale plik jest stały. Podmiana kroju = nowa nazwa.
+  <FilesMatch "\.woff2$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+
+  # Wejściowe moduły three (`three.js`, `jsm/*.js`) i nasze skrypty z `public/js`
+  # nie mają hasha i zmieniają się przy wydaniach — godzina, nie rok.
+  <FilesMatch "\.(mjs|js)$">
+    Header setifempty Cache-Control "public, max-age=3600"
+  </FilesMatch>
+
+  # Obrazy i ikony spod katalogu głównego.
+  <FilesMatch "\.(png|jpe?g|webp|avif|svg|ico|glb|usdz)$">
+    Header setifempty Cache-Control "public, max-age=604800"
+  </FilesMatch>
+
+  # HTML zawsze rewalidowany — inaczej po wdrożeniu klient widzi starą stronę.
+  <FilesMatch "\.html$">
+    Header set Cache-Control "public, max-age=0, must-revalidate"
+  </FilesMatch>
+
+  # Mapa strony i robots — krótko, żeby zmiany szły od razu.
+  <FilesMatch "^(sitemap.*\.xml|robots\.txt|llms\.txt)$">
+    Header set Cache-Control "public, max-age=3600"
+  </FilesMatch>
+
+  # ---------------------------------------------------------------------------
+  #  NAGŁÓWKI BEZPIECZEŃSTWA
+  #
+  #  Bez pełnego CSP: strona ma skrypty inline (import mapa, JSON-LD, boot hero)
+  #  i ładuje `model-viewer` z CDN na żądanie. Sensowne CSP wymaga najpierw
+  #  przejścia na nonce'y — do zrobienia osobno, nie przy okazji cache'a.
+  # ---------------------------------------------------------------------------
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Permissions-Policy "geolocation=(), microphone=(), camera=(), interest-cohort=()"
+  Header always set Strict-Transport-Security "max-age=15552000" env=HTTPS
+
+  # Fonty serwujemy z tej samej domeny, ale `crossorigin` w `<link rel=preload>`
+  # wymusza tryb CORS także dla same-origin — bez tego preload się marnuje
+  # i font pobiera się drugi raz.
+  <FilesMatch "\.woff2$">
+    Header set Access-Control-Allow-Origin "*"
+  </FilesMatch>
+</IfModule>
+
+# ---------------------------------------------------------------------------
+#  DROBIAZGI
+# ---------------------------------------------------------------------------
+
+# Panel braków to materiał roboczy dla klienta — poza wyszukiwarkami.
+<IfModule mod_headers.c>
+  <If "%{REQUEST_URI} =~ m#^/_braki#">
+    Header set X-Robots-Tag "noindex, nofollow"
+  </If>
+</IfModule>
+
+# Pliki, których nie ma prawa być na produkcji, ale gdyby ktoś je wgrał ręcznie.
+<FilesMatch "^(\.env.*|package(-lock)?\.json|astro\.config\.mjs|README\.md)$">
+  Require all denied
+</FilesMatch>

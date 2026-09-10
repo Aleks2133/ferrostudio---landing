@@ -1,0 +1,60 @@
+---
+import { getLang, home, useTranslations } from '../i18n';
+
+interface Crumb {
+  label: string;
+  href?: string;
+}
+interface Props {
+  items: Crumb[];
+  variant?: 'light' | 'onyx';
+}
+const { items, variant = 'light' } = Astro.props;
+
+const lang = getLang(Astro.url.pathname);
+const t = useTranslations(lang);
+
+const all = [{ label: t('crumbs.home'), href: home(lang) }, ...items];
+---
+
+<nav class:list={['crumbs', { 'crumbs--onyx': variant === 'onyx' }]} aria-label={t('crumbs.aria')}>
+  <ol>
+    {
+      all.map((item, i) => (
+        <li>
+          {item.href ? <a href={item.href}>{item.label}</a> : <span aria-current="page">{item.label}</span>}
+          {i < all.length - 1 && <span class="crumbs__sep" aria-hidden="true">/</span>}
+        </li>
+      ))
+    }
+  </ol>
+</nav>
+
+<style>
+  .crumbs { margin-bottom: 1.5rem; }
+  .crumbs ol {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    align-items: center;
+  }
+  .crumbs li { display: inline-flex; align-items: center; gap: 0.4rem; }
+  .crumbs a,
+  .crumbs span[aria-current] {
+    font-size: 0.8125rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: var(--color-tin);
+    text-decoration: none;
+  }
+  .crumbs a:hover { color: var(--color-rust); }
+  .crumbs span[aria-current] { color: var(--color-onyx); }
+  .crumbs__sep { color: var(--color-line); font-size: 0.75rem; }
+
+  .crumbs--onyx a,
+  .crumbs--onyx span[aria-current] { color: rgba(237, 234, 227, 0.5); }
+  .crumbs--onyx a:hover { color: var(--color-rust-lite); }
+  .crumbs--onyx span[aria-current] { color: var(--color-bg); }
+  .crumbs--onyx .crumbs__sep { color: rgba(237, 234, 227, 0.25); }
+</style>

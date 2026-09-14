@@ -2,6 +2,8 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ContactCta from '../components/sections/ContactCta.astro';
 import PageHero from '../components/PageHero.astro';
+import SectionHeader from '../components/SectionHeader.astro';
+import { SITE } from '../config';
 
 const faqs = [
   {
@@ -46,18 +48,27 @@ const faqJsonLd = {
     </p>
   </PageHero>
 
-  <section class="intro">
-    <div class="container-x intro__grid">
-      <div data-reveal>
-        <h2>Dwie drogi</h2>
-        <p class="intro__lead">
-          Krótkie pytanie — formularz poniżej albo telefon. Konkretny projekt do wyceny —
-          brief, w którym prowadzimy przez trzy pytania i wychodzi z tego komplet informacji.
-        </p>
-      </div>
-      <div class="intro__cta" data-reveal="right">
-        <a href="/wycena" class="btn btn-primary">Wypełnij brief wyceny</a>
-        <p class="intro__note">Dwie minuty. Dostajesz konkretniejszą wycenę i mniej dopytujemy.</p>
+  <section class="intro section-y">
+    <div class="container-x">
+      <SectionHeader index="wybierz drogę" title="Dwie drogi do wyceny" />
+      <div class="paths">
+        <div class="paths__card" data-reveal>
+          <h3>Szybkie pytanie</h3>
+          <p>
+            Coś doprecyzować albo zapytać, zanim wyślesz projekt? Napisz przez formularz poniżej
+            albo zadzwoń — odpowiadamy szybko.
+          </p>
+          <a href={SITE.phoneHref} class="link-cut">{SITE.phone}</a>
+        </div>
+        <div class="paths__card" data-reveal="right">
+          <h3>Konkretny projekt</h3>
+          <p>
+            Masz już pomysł na logotyp, napis albo dekorację? Brief prowadzi przez trzy pytania i
+            od razu daje nam komplet informacji do wyceny.
+          </p>
+          <a href="/wycena" class="btn btn-primary">Wypełnij brief wyceny</a>
+          <p class="paths__note">Dwie minuty. Konkretniejsza wycena, mniej dopytywania.</p>
+        </div>
       </div>
     </div>
   </section>
@@ -95,22 +106,30 @@ const faqJsonLd = {
 </BaseLayout>
 
 <style>
-  .intro { padding-block: clamp(1.75rem, 4vw, 2.75rem) clamp(2rem, 4vw, 3rem); }
-  .intro__grid { display: grid; grid-template-columns: 1fr; gap: 2rem; align-items: start; }
-  .intro__grid h2 { font-size: clamp(1.5rem, 3.5vw, 2.5rem); }
-  .intro__lead {
-    margin-top: 1rem;
-    max-width: 52ch;
-    color: color-mix(in srgb, var(--color-onyx) 76%, transparent);
+  .paths {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: clamp(1.5rem, 3vw, 2rem);
   }
-  .intro__cta { display: grid; gap: 0.9rem; justify-items: start; }
-  .intro__note { font-size: 0.8125rem; color: var(--color-tin); max-width: 34ch; }
+  .paths__card {
+    padding: clamp(1.5rem, 3vw, 2rem);
+    border: 1px solid var(--color-line);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.9rem;
+  }
+  .paths__card h3 { font-size: 1.25rem; }
+  .paths__card p {
+    color: color-mix(in srgb, var(--color-onyx) 76%, transparent);
+    max-width: 40ch;
+  }
+  .paths__note { font-size: 0.8125rem; color: var(--color-tin); margin-top: -0.4rem; }
+  @media (min-width: 700px) {
+    .paths { grid-template-columns: repeat(2, 1fr); }
+  }
   .faq__idx { color: var(--color-tin); letter-spacing: 0.08em; margin-bottom: 0.75rem; }
   .trust__links { display: flex; flex-wrap: wrap; gap: 1rem 2rem; }
-
-  @media (min-width: 860px) {
-    .intro__grid { grid-template-columns: 1.4fr 1fr; }
-  }
 
   .faq { background: var(--color-panel); }
   .faq__head { text-align: center; margin-bottom: 2.5rem; }

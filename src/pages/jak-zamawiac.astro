@@ -1,7 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import PageHero from '../components/PageHero.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
 import SectionHeader from '../components/SectionHeader.astro';
 import { SITE } from '../config';
 import procesPhoto from '../assets/photos/home-proces-warsztat.jpg';
@@ -97,26 +97,30 @@ const howToJsonLd = {
   path="/jak-zamawiac"
   jsonLd={[faqJsonLd, howToJsonLd]}
 >
-  <PageHero breadcrumb={[{ label: 'Jak zamawiać' }]} index="proces">
-    <h1>Jak zamawiać</h1>
-    <p class="phero__lead">
-      Od pierwszego kontaktu do przesyłki pod drzwiami — pełny proces zamówienia
-      indywidualnego elementu z metalu.
-    </p>
-  </PageHero>
+  <section class="phero-photo on-onyx" aria-labelledby="page-heading">
+    <div class="phero-photo__bg" aria-hidden="true">
+      <Image
+        src={procesPhoto}
+        alt=""
+        widths={[800, 1200, 1600, 2000]}
+        sizes="100vw"
+        loading="eager"
+      />
+      <div class="phero-photo__scrim"></div>
+    </div>
+    <div class="container-x phero-photo__content">
+      <Breadcrumbs items={[{ label: 'Jak zamawiać' }]} variant="onyx" />
+      <p class="phero-photo__idx mono">proces</p>
+      <h1 id="page-heading">Jak zamawiać</h1>
+      <p class="phero-photo__lead">
+        Od pierwszego kontaktu do przesyłki pod drzwiami — pełny proces zamówienia
+        indywidualnego elementu z metalu.
+      </p>
+    </div>
+  </section>
 
   <section class="page section-y">
     <div class="container-x">
-      <figure class="page__photo" data-reveal>
-        <Image
-          src={procesPhoto}
-          alt="Maszyna w trakcie precyzyjnego cięcia metalowej blachy"
-          widths={[480, 800, 1200, 1600]}
-          sizes="(min-width:1000px) 1000px, 100vw"
-          loading="lazy"
-        />
-      </figure>
-
       <ol class="steps">
         {
           steps.map((s, i) => (
@@ -183,7 +187,46 @@ const howToJsonLd = {
 
 <style>
   .faq__idx { color: var(--color-tin); letter-spacing: 0.08em; margin-bottom: 0.75rem; }
-  .page__photo { margin: 0 0 clamp(2rem, 4vh, 3rem); }
+
+  .phero-photo {
+    position: relative;
+    min-height: min(56svh, 480px);
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+    padding-block: 2rem 2.5rem;
+  }
+  .phero-photo__bg { position: absolute; inset: 0; z-index: 0; }
+  .phero-photo__bg :global(img) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .phero-photo__scrim {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(0deg, var(--color-onyx) 2%, rgba(25, 24, 21, 0.55) 45%, rgba(25, 24, 21, 0.15) 75%),
+      linear-gradient(100deg, rgba(25, 24, 21, 0.55) 0%, rgba(25, 24, 21, 0.15) 55%);
+  }
+  .phero-photo__content { position: relative; z-index: 1; max-width: 40rem; }
+  .phero-photo__idx { color: rgba(237, 234, 227, 0.55); letter-spacing: 0.08em; margin-top: 0.75rem; }
+  .phero-photo__content h1 {
+    font-size: clamp(2.25rem, 5.5vw, 3.75rem);
+    line-height: 0.95;
+    margin-top: 0.5rem;
+    color: var(--color-bg);
+  }
+  .phero-photo__lead {
+    margin-top: 1rem;
+    color: rgba(237, 234, 227, 0.78);
+    font-size: 1.0625rem;
+    max-width: 52ch;
+  }
+  @media (min-width: 700px) {
+    .phero-photo { min-height: min(64svh, 560px); }
+  }
 
   .steps {
     list-style: none;

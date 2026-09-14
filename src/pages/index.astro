@@ -9,6 +9,8 @@ import { SITE } from '../config';
 import workMain from '../assets/photos/realizacja-society-landscape.jpg';
 import workProces from '../assets/photos/realizacja-society-landscape-proces.jpg';
 import workDetal from '../assets/photos/realizacja-society-landscape-detal.jpg';
+import workMagazyn02 from '../assets/photos/realizacja-society-landscape-magazyn-02.jpg';
+import workLifestyle from '../assets/photos/realizacja-society-landscape-lifestyle.jpg';
 
 const offer = [
   {
@@ -37,6 +39,8 @@ const work = [
   { src: workMain, alt: 'Odręczny znak firmowy Society Landscape wycięty w metalu, tuż po cięciu' },
   { src: workProces, alt: 'Panele znaku Society Landscape w trakcie malowania proszkowego' },
   { src: workDetal, alt: 'Zbliżenie na krawędź cięcia i wykończenie znaku Society Landscape' },
+  { src: workMagazyn02, alt: 'Znak Society Landscape w magazynie marki' },
+  { src: workLifestyle, alt: 'Zespół Society Landscape przy metalowym znaku marki' },
 ];
 
 const services = ['Logotypy z metalu', 'Dekoracje ścienne z metalu', 'Cięcie metalu na zamówienie'].map(
@@ -48,13 +52,46 @@ const services = ['Logotypy z metalu', 'Dekoracje ścienne z metalu', 'Cięcie m
     areaServed: { '@type': 'Country', name: SITE.areaServed },
   })
 );
+
+const faqs = [
+  {
+    q: 'Ile trwa realizacja?',
+    a: 'Zwykle od 3 do 10 dni roboczych — zależy od wielkości, materiału i wykończenia. Prostsze projekty, jak znak dla Society Landscape, robimy nawet w 2 dni.',
+  },
+  {
+    q: 'Jaki materiał wybrać?',
+    a: 'Do wnętrz najczęściej stal czarna lub nierdzewna, na zewnątrz — corten albo nierdzewna. Jeśli nie wiesz, co pasuje do Twojego projektu, napisz — doradzimy na etapie wyceny.',
+  },
+  {
+    q: 'Nie mam pliku wektorowego, tylko pomysł — wystarczy?',
+    a: 'Tak. Prześlij zdjęcie, szkic albo po prostu opisz pomysł — na tej podstawie przygotujemy projekt gotowy do cięcia.',
+  },
+  {
+    q: 'Ile to będzie kosztować?',
+    a: 'Cena zależy od rozmiaru, materiału i wykończenia, więc wyceniamy indywidualnie. Wypełnij krótki brief w zakładce Wycena — odezwiemy się w 1–2 dni robocze.',
+  },
+  {
+    q: 'Wysyłacie poza swoje miasto?',
+    a: 'Tak, wysyłka odbywa się na terenie całej Polski.',
+  },
+];
+
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+};
 ---
 
 <BaseLayout
   title="Ferro Studio — logotypy i dekoracje z metalu ciętego na wymiar"
   description="Projektujemy i wycinamy w metalu: logotypy firmowe, napisy i dekoracje ścienne. Projekt indywidualny, precyzyjne wykonanie, wysyłka w całej Polsce."
   path="/"
-  jsonLd={services}
+  jsonLd={[...services, faqJsonLd]}
 >
   <Hero />
 
@@ -96,23 +133,69 @@ const services = ['Logotypy z metalu', 'Dekoracje ścienne z metalu', 'Cięcie m
   <section id="realizacja" class="work section-y">
     <div class="container-x">
       <SectionHeader index="03 / realizacja" title="Society Landscape" />
-      <p class="work__lead" data-reveal>
-        Odręczny, kaligraficzny znak firmowy wycięty w metalu dla
-        <a href="https://societylandscape.pl" rel="noopener">Society Landscape</a> — od cięcia
-        po malowanie proszkowe.
-      </p>
-      <div class="work__grid">
+      <div class="work__layout">
+        <a href="/realizacje/society-landscape" class="work__hero" data-reveal aria-label="Zobacz pełną realizację Society Landscape">
+          <figure>
+            <Image
+              src={work[0].src}
+              alt={work[0].alt}
+              widths={[480, 800, 1200]}
+              sizes="(min-width:900px) 45vw, 100vw"
+              loading="lazy"
+            />
+          </figure>
+        </a>
+        <div class="work__side">
+          <p class="work__tag mono">Zaprzyjaźniona marka odzieżowa</p>
+          <p class="work__lead" data-reveal="right">
+            Odręczny, kaligraficzny znak firmowy wycięty w metalu dla{' '}
+            <a href="https://societylandscape.pl" rel="noopener">Society Landscape</a> — do biura
+            i na wyjazdowe popupy, w formie odpornej na deszcz i częste przewożenie.
+          </p>
+          <div class="work__thumbs">
+            {
+              work.slice(1).map((w, i) => (
+                <a
+                  href="/realizacje/society-landscape"
+                  class="work__fig"
+                  data-reveal="right"
+                  style={`--i:${i + 1}`}
+                  aria-label="Zobacz pełną realizację Society Landscape"
+                >
+                  <figure>
+                    <Image
+                      src={w.src}
+                      alt={w.alt}
+                      widths={[320, 480, 640]}
+                      sizes="(min-width:900px) 22vw, 50vw"
+                      loading="lazy"
+                    />
+                  </figure>
+                </a>
+              ))
+            }
+          </div>
+          <a href="/realizacje/society-landscape" class="link-cut" data-reveal="right" style="--i:3">
+            Zobacz pełną realizację →
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="faq section-y">
+    <div class="container-x">
+      <div class="faq__head">
+        <p class="faq__idx mono">często zadawane pytania</p>
+        <h2>Zanim napiszesz</h2>
+      </div>
+      <div class="faq__list">
         {
-          work.map((w, i) => (
-            <figure class="work__fig" data-reveal={i % 2 === 1 ? 'right' : true}>
-              <Image
-                src={w.src}
-                alt={w.alt}
-                widths={[480, 800, 1200]}
-                sizes="(min-width:900px) 33vw, 100vw"
-                loading="lazy"
-              />
-            </figure>
+          faqs.map((f, i) => (
+            <details class="faq__item" data-reveal style={`--i:${i}`}>
+              <summary>{f.q}</summary>
+              <p>{f.a}</p>
+            </details>
           ))
         }
       </div>
@@ -169,27 +252,88 @@ const services = ['Logotypy z metalu', 'Dekoracje ścienne z metalu', 'Cięcie m
     .mats__row { grid-template-columns: 14rem 1fr; align-items: baseline; }
   }
 
-  .work__lead {
-    max-width: 54ch;
-    margin-bottom: clamp(1.5rem, 3vw, 2rem);
-    color: color-mix(in srgb, var(--color-onyx) 78%, transparent);
-  }
-  .work__lead a { color: var(--color-rust); text-decoration: underline; text-underline-offset: 2px; }
-  .work__grid {
+  .work__layout {
     display: grid;
-    grid-template-columns: 1fr;
-    gap: clamp(1rem, 3vw, 1.5rem);
+    gap: clamp(1.5rem, 3vw, 2rem);
   }
-  .work__fig { margin: 0; }
-  .work__fig img {
+  .work__hero {
+    display: block;
+    overflow: hidden;
+    border-radius: 2px;
+    background: var(--color-panel);
+  }
+  .work__hero figure,
+  .work__fig figure { margin: 0; }
+  .work__hero img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     display: block;
     aspect-ratio: 4 / 5;
   }
-  @media (min-width: 760px) {
-    .work__grid { grid-template-columns: repeat(3, 1fr); }
-    .work__fig img { aspect-ratio: 1 / 1; }
+  .work__side { display: flex; flex-direction: column; }
+  .work__tag {
+    color: var(--color-tin);
+    letter-spacing: 0.06em;
+    margin-bottom: 0.75rem;
   }
+  .work__lead {
+    max-width: 46ch;
+    margin-bottom: clamp(1.25rem, 2.5vw, 1.75rem);
+    color: color-mix(in srgb, var(--color-onyx) 78%, transparent);
+  }
+  .work__lead a { color: var(--color-rust); text-decoration: underline; text-underline-offset: 2px; }
+  .work__thumbs {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+    margin-bottom: clamp(1.5rem, 3vw, 2rem);
+  }
+  .work__fig { display: block; margin: 0; overflow: hidden; border-radius: 2px; }
+  .work__fig img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    aspect-ratio: 1 / 1;
+  }
+  @media (min-width: 900px) {
+    .work__layout { grid-template-columns: 3fr 2fr; align-items: start; }
+    .work__hero img { aspect-ratio: 4 / 4.5; }
+    .work__side { justify-content: center; padding-left: 0.5rem; }
+  }
+
+  .faq { background: var(--color-panel); }
+  .faq__idx { color: var(--color-tin); letter-spacing: 0.08em; margin-bottom: 0.75rem; }
+  .faq__head { text-align: center; margin-bottom: 2.5rem; }
+  .faq h2 { font-size: clamp(1.75rem, 4vw, 2.5rem); margin-top: 0.6rem; }
+  .faq__list {
+    display: flex;
+    flex-direction: column;
+    max-width: 62ch;
+    margin-inline: auto;
+    border-top: 1px solid var(--color-line);
+  }
+  .faq__item { border-bottom: 1px solid var(--color-line); padding: 1.25rem 0; }
+  .faq__item summary {
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1.05rem;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .faq__item summary::-webkit-details-marker { display: none; }
+  .faq__item summary::after {
+    content: '+';
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    color: var(--color-rust);
+    flex: 0 0 auto;
+    transition: transform 0.2s;
+  }
+  .faq__item[open] summary::after { transform: rotate(45deg); }
+  .faq__item p { margin-top: 0.9rem; color: color-mix(in srgb, var(--color-onyx) 72%, transparent); }
 </style>

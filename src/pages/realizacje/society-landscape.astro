@@ -1,0 +1,359 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import SectionHeader from '../../components/SectionHeader.astro';
+import ContactCta from '../../components/sections/ContactCta.astro';
+import { SITE } from '../../config';
+
+import workMain from '../../assets/photos/realizacja-society-landscape.jpg';
+import workProces from '../../assets/photos/realizacja-society-landscape-proces.jpg';
+import workDetal from '../../assets/photos/realizacja-society-landscape-detal.jpg';
+import workLifestyle from '../../assets/photos/realizacja-society-landscape-lifestyle.jpg';
+import workMagazyn01 from '../../assets/photos/realizacja-society-landscape-magazyn-01.jpg';
+import workMagazyn03 from '../../assets/photos/realizacja-society-landscape-magazyn-03.jpg';
+import workMagazyn04 from '../../assets/photos/realizacja-society-landscape-magazyn-04.jpg';
+import btsPoster from '../../assets/photos/realizacja-society-landscape-bts-poster.jpg';
+
+// Opinia klienta dojdzie później — sekcja renderuje się dopiero, gdy tu wpiszemy treść.
+const testimonial = null as { quote: string; author: string } | null;
+
+const restOfGallery = [
+  { src: workMagazyn01, alt: 'Gotowy znak Society Landscape oparty o regał w magazynie marki' },
+  { src: workMagazyn03, alt: 'Znak Society Landscape oparty o regał, widok z boku' },
+  { src: workMagazyn04, alt: 'Zbliżenie na znak Society Landscape w magazynie marki' },
+];
+
+const projectJsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'CreativeWork',
+    name: 'Znak firmowy Society Landscape',
+    about:
+      'Dwuwarstwowy, odporny na warunki atmosferyczne znak firmowy wycięty w metalu dla marki odzieżowej Society Landscape — do biura i na eventy popup.',
+    creator: { '@id': `${SITE.url}/#business` },
+    url: `${SITE.url}/realizacje/society-landscape`,
+    image: `${SITE.url}/og-default.png`,
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Strona główna', item: SITE.url },
+      { '@type': 'ListItem', position: 2, name: 'Realizacje', item: `${SITE.url}/#realizacja` },
+      { '@type': 'ListItem', position: 3, name: 'Society Landscape', item: `${SITE.url}/realizacje/society-landscape` },
+    ],
+  },
+];
+---
+
+<BaseLayout
+  title="Society Landscape — znak firmowy z metalu na popupy | Ferro Studio"
+  description="Jak wycięliśmy dwuwarstwowy, odporny na deszcz znak firmowy z metalu dla marki odzieżowej Society Landscape — do biura i na wyjazdowe popupy. Case study krok po kroku."
+  path="/realizacje/society-landscape"
+  jsonLd={projectJsonLd}
+>
+  <PageHero breadcrumb={[{ label: 'Realizacje', href: '/#realizacja' }, { label: 'Society Landscape' }]} index="realizacja / moda">
+    <h1>Society Landscape</h1>
+    <p class="phero__lead">
+      Znak firmowy z metalu, który jeździ na popupy i stoi w biurze —
+      dwuwarstwowa blacha, gotowa na deszcz.
+    </p>
+  </PageHero>
+
+  <section class="page section-y">
+    <div class="container-x">
+      <figure class="page__hero-photo" data-reveal>
+        <Image
+          src={workMain}
+          alt="Odręczny znak firmowy Society Landscape wycięty w metalu, tuż po cięciu"
+          widths={[480, 800, 1200, 1600]}
+          sizes="(min-width:1000px) 1180px, 100vw"
+          loading="eager"
+        />
+      </figure>
+    </div>
+  </section>
+
+  <section class="story section-y">
+    <div class="container-x story__grid">
+      <SectionHeader index="01 / brief" title="Kim jest Society Landscape" class="story__head" />
+      <div class="story__body" data-reveal="right">
+        <p>
+          <a href="https://societylandscape.pl" rel="noopener">Society Landscape</a> szyje i sprzedaje
+          ubrania — a swoją markę pokazuje nie tylko w sieci, ale i na żywo, na popupach w różnych
+          miastach. Do biura i na te wyjazdowe stoiska potrzebowali czegoś, co odda ich odręczny,
+          kaligraficzny podpis — ale w formie, która przetrwa transport, montaż i pogodę, a nie
+          tylko ładnie wygląda na zdjęciu.
+        </p>
+        <p>
+          Society Landscape to nasi przyjaciele — dziękujemy im za zaufanie.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="story story--alt section-y">
+    <div class="container-x story__grid">
+      <SectionHeader index="02 / materiał i wykonanie" title="Dwie blachy, jeden znak" class="story__head" />
+      <div class="story__body" data-reveal="right">
+        <p>
+          Znak potrzebował wytrzymałości, jakiej wymaga sprzęt eventowy — popupy stoją na zewnątrz,
+          w każdą pogodę, więc żadna naklejka ani nadruk by tego nie zniósł. Zamiast tego wycięliśmy
+          go z dwóch warstw blachy: spodniej, czarnej, i wierzchniej, białej — z wyciętym w niej
+          podpisem marki. Litery nie są naklejone ani malowane, tylko fizycznie wycięte w metalu:
+          czarna warstwa prześwituje przez otwory w białej, więc znak nie blaknie, nie odkleja się
+          i nie boi się deszczu ani częstego przewożenia z miejsca na miejsce.
+        </p>
+        <p>Całość — od projektu do gotowego elementu — zrobiliśmy w 2 dni.</p>
+      </div>
+    </div>
+    <div class="container-x">
+      <div class="story__pair">
+        <figure class="story__photo" data-reveal>
+          <Image
+            src={workProces}
+            alt="Panele znaku Society Landscape w trakcie malowania proszkowego"
+            widths={[480, 800, 1200]}
+            sizes="(min-width:900px) 50vw, 100vw"
+            loading="lazy"
+          />
+        </figure>
+        <figure class="story__photo" data-reveal="right">
+          <Image
+            src={workDetal}
+            alt="Zbliżenie na krawędź cięcia i wykończenie znaku Society Landscape"
+            widths={[480, 800, 1200]}
+            sizes="(min-width:900px) 50vw, 100vw"
+            loading="lazy"
+          />
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="story section-y">
+    <div class="container-x today">
+      <div class="today__text">
+        <SectionHeader index="03 / dziś" title="W biurze i na trasie" class="story__head" />
+        <div class="story__body" data-reveal="right">
+          <p>
+            Dziś znak stoi w biurze Society Landscape i jeździ z nimi na popupy, gdziekolwiek
+            pokazują swoje kolekcje.
+          </p>
+        </div>
+      </div>
+      <figure class="today__photo" data-reveal="right">
+        <Image
+          src={workLifestyle}
+          alt="Zespół Society Landscape przy metalowym znaku marki w magazynie"
+          widths={[480, 800, 1200]}
+          sizes="(min-width:900px) 40vw, 100vw"
+          loading="lazy"
+        />
+      </figure>
+    </div>
+  </section>
+
+  {
+    testimonial && (
+      <section class="quote section-y on-onyx">
+        <div class="container-x">
+          <blockquote data-reveal>
+            <p>&ldquo;{testimonial.quote}&rdquo;</p>
+            <cite>{testimonial.author}</cite>
+          </blockquote>
+        </div>
+      </section>
+    )
+  }
+
+  <section class="page section-y">
+    <div class="container-x">
+      <SectionHeader index="04 / galeria" title="Więcej z sesji" />
+      <div class="gallery">
+        {
+          restOfGallery.map((w, i) => (
+            <figure class="gallery__fig" data-reveal={i % 2 === 1 ? 'right' : true} style={`--i:${i % 4}`}>
+              <Image
+                src={w.src}
+                alt={w.alt}
+                widths={[480, 800, 1200]}
+                sizes="(min-width:900px) 50vw, 100vw"
+                loading="lazy"
+              />
+            </figure>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="story section-y">
+    <div class="container-x bts">
+      <div class="bts__text">
+        <SectionHeader index="05 / za kulisami" title="Sesja od kuchni" class="story__head" />
+        <div class="story__body" data-reveal="right">
+          <p>
+            Krótkie ujęcia z planu — od ustawiania światła, przez stylizację, po finałowe zdjęcie
+            ze znakiem.
+          </p>
+        </div>
+      </div>
+      <figure class="bts__video" data-reveal="right">
+        <video
+          src="/videos/society-landscape-bts.mp4"
+          poster={btsPoster.src}
+          autoplay
+          muted
+          loop
+          playsinline
+          controls
+          preload="metadata"
+        />
+      </figure>
+    </div>
+  </section>
+
+  <section class="next section-y">
+    <div class="container-x">
+      <p class="next__text" data-reveal>
+        Masz podobny pomysł — logo do biura, na event albo na fasadę?{' '}
+        <a href="/jak-zamawiac" class="link-cut">Zobacz, jak wygląda u nas proces zamówienia →</a>
+      </p>
+    </div>
+  </section>
+
+  <ContactCta />
+</BaseLayout>
+
+<style>
+  .page__hero-photo {
+    margin: 0;
+    overflow: hidden;
+    border-radius: 2px;
+    background: var(--color-panel);
+    aspect-ratio: 16 / 9;
+  }
+  .page__hero-photo :global(img) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+  @media (min-width: 700px) {
+    .page__hero-photo { aspect-ratio: 21 / 9; }
+  }
+
+  .story--alt { background: var(--color-panel); }
+  .story__grid { display: grid; gap: 1.5rem; }
+  .story__head { margin-bottom: 0; }
+  .story__body {
+    display: grid;
+    gap: 1rem;
+    max-width: 60ch;
+    color: color-mix(in srgb, var(--color-onyx) 82%, transparent);
+    font-size: 1.0625rem;
+  }
+  .story__body a { color: var(--color-rust); text-decoration: underline; text-underline-offset: 2px; }
+  @media (min-width: 900px) {
+    .story__grid { grid-template-columns: minmax(0, 18rem) 1fr; gap: 2.5rem; align-items: start; }
+  }
+
+  .today {
+    display: grid;
+    gap: clamp(1.5rem, 3vw, 2.5rem);
+    align-items: center;
+  }
+  .today__text .story__head { margin-bottom: 1rem; }
+  .today__photo { margin: 0; overflow: hidden; border-radius: 2px; }
+  .today__photo :global(img) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    aspect-ratio: 4 / 5;
+  }
+  @media (min-width: 900px) {
+    .today { grid-template-columns: 1fr minmax(0, 22rem); }
+  }
+
+  .story__pair {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: clamp(1rem, 2.5vw, 1.5rem);
+    margin-top: clamp(1.75rem, 3.5vw, 2.5rem);
+  }
+  .story__photo { margin: 0; overflow: hidden; border-radius: 2px; }
+  .story__photo :global(img) { display: block; width: 100%; height: auto; }
+  @media (min-width: 760px) {
+    .story__pair { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  .quote blockquote {
+    margin: 0;
+    max-width: 42rem;
+  }
+  .quote p {
+    font-family: var(--font-display);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+    font-size: clamp(1.5rem, 3.5vw, 2.5rem);
+    line-height: 1.1;
+    color: var(--color-bg);
+  }
+  .quote cite {
+    display: block;
+    margin-top: 1rem;
+    font-style: normal;
+    color: rgba(237, 234, 227, 0.6);
+  }
+
+  .gallery {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: clamp(1rem, 2.5vw, 1.5rem);
+  }
+  .gallery__fig {
+    margin: 0;
+    overflow: hidden;
+    border-radius: 2px;
+  }
+  .gallery__fig :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  @media (min-width: 700px) {
+    .gallery { grid-template-columns: repeat(3, 1fr); }
+  }
+
+  .bts {
+    display: grid;
+    gap: clamp(1.5rem, 3vw, 2.5rem);
+    align-items: center;
+  }
+  .bts__text .story__head { margin-bottom: 1rem; }
+  .bts__video {
+    margin: 0;
+    overflow: hidden;
+    border-radius: 2px;
+    background: var(--color-onyx);
+  }
+  @media (min-width: 900px) {
+    .bts { grid-template-columns: 1fr minmax(0, 22rem); }
+  }
+  .bts__video video {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .next { border-top: 1px solid var(--color-line); }
+  .next__text {
+    font-size: 1.0625rem;
+    max-width: 44ch;
+  }
+
+</style>
